@@ -137,8 +137,21 @@ class RayTracer
     color getColor(int x, int y)
     {
       PVector origin = scene.camera;
+      float w = width;
+      float h = height;
+      
+      //Code found on the slides
+      //Seems like this is for general squared-scene cases
+      //Calculating how far left or right and how far up or down we must go
+      float u = x*1.0/w - 0.5;
+      float v = - (y*1.0/h - 0.5);
+      
+      //Direction is prob the direction of the ray to the pixel
+      PVector direction = new PVector(u*w, w/2, v*h).normalize();
+      
+      
       // remove this line when you implement basic raytracing
-      throw new NotImplementedException("Basic raytracing not implemented yet");
+      //throw new NotImplementedException("Basic raytracing not implemented yet");
       
       /*if (scene.reflections > 0)
       {
@@ -147,6 +160,6 @@ class RayTracer
       }*/
       
       /// this will be the fallback case
-      //return this.scene.background;
+      return this.scene.background;
     }
 }
