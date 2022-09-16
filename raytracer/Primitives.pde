@@ -36,11 +36,18 @@ class Sphere implements SceneObject
         float t1 = projection + sqrt(sq(this.radius) - sq(distance));
         float t2 = projection - sqrt(sq(this.radius) - sq(distance));
         
-        if (t1 < 0 || t2 < 0 && distance > this.radius){
+        //if(!(Float.isNaN(t1)))
+        //{
+        //  print(t1);
+        //  print(" ");
+        //  println(t2);
+        //}
+        
+        if ((t1 < 0 || t2 < 0) && distance > this.radius){
           return result;
         }
         else if (t1 < t2){
-          RayHit entry = new RayHit();
+          RayHit entry = new RayHit(); //<>//
           RayHit exit = new RayHit();
           
           entry.t = t1;
@@ -58,17 +65,17 @@ class Sphere implements SceneObject
           result.add(entry);
           result.add(exit);
         }
-        else if (t2 > t1){
+        else if (t2 < t1){
           RayHit entry = new RayHit();
           RayHit exit = new RayHit();
           
-          entry.t = t1;
+          entry.t = t2;
           entry.location = p;
           entry.normal = PVector.sub(p, this.center).normalize();
           entry.entry = true;
           entry.material = this.material;
           
-          exit.t = t2;
+          exit.t = t1;
           exit.location = p;
           exit.normal = PVector.sub(p, this.center).normalize();
           exit.entry = false;
