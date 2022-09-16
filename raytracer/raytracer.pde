@@ -143,12 +143,18 @@ class RayTracer
       //Code found on the slides
       //Seems like this is for general squared-scene cases
       //Calculating how far left or right and how far up or down we must go
-      float u = x*1.0/w - 0.5;
-      float v = - (y*1.0/h - 0.5);
+      float u = x * 1.0 / w - 0.5;
+      float v = - (y * 1.0 / h - 0.5);
       
       //Direction is prob the direction of the ray to the pixel
-      PVector direction = new PVector(u*w, w/2, v*h).normalize();
+      PVector direction = new PVector(u * w, w/2, v * h).normalize();
       
+      Ray pixelRay = new Ray(origin, direction);
+      
+      ArrayList<RayHit> hits = scene.root.intersect(pixelRay);
+      if(hits.size() > 0){
+        return scene.lighting.getColor(hits.get(0), scene, pixelRay.origin);
+      }
       
       // remove this line when you implement basic raytracing
       //throw new NotImplementedException("Basic raytracing not implemented yet");

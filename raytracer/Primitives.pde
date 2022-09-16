@@ -11,13 +11,73 @@ class Sphere implements SceneObject
        this.material = material;
        
        // remove this line when you implement spheres
-       throw new NotImplementedException("Spheres not implemented yet");
+       //throw new NotImplementedException("Spheres not implemented yet");
     }
     
     ArrayList<RayHit> intersect(Ray r)
     {
-        ArrayList<RayHit> result = new ArrayList<RayHit>();
+        ArrayList<RayHit> result = new ArrayList<RayHit>(); //<>//
         // TODO: Step 2: implement ray-sphere intersections
+        
+        // t_p = (c - o) * direction
+        PVector temp = PVector.sub(this.center, r.origin);
+        float projection = PVector.dot(temp, r.direction);
+        
+        // p = o + t_p * direction
+        temp = PVector.mult(r.direction, projection);
+        PVector p = PVector.add(r.origin, temp);
+        
+        //calc the distance from p to c
+        temp = PVector.sub(this.center, p);
+        float distance = temp.mag();
+        
+        //calc t-values
+        //t = t_p +/- sqrt(sq(radius) - sq(distance))
+        float t1 = projection + sqrt(sq(this.radius) - sq(distance));
+        float t2 = projection - sqrt(sq(this.radius) - sq(distance));
+        
+        if (t1 < 0 || t2 < 0 && distance > this.radius){
+          return result;
+        }
+        else if (t1 < t2){
+          RayHit entry = new RayHit();
+          RayHit exit = new RayHit();
+          
+          entry.t = t1;
+          entry.location = p;
+          entry.normal = PVector.sub(p, this.center).normalize();
+          entry.entry = true;
+          entry.material = this.material;
+          
+          exit.t = t2;
+          exit.location = p;
+          exit.normal = PVector.sub(p, this.center).normalize();
+          exit.entry = false;
+          exit.material = this.material;
+          
+          result.add(entry);
+          result.add(exit);
+        }
+        else if (t2 > t1){
+          RayHit entry = new RayHit();
+          RayHit exit = new RayHit();
+          
+          entry.t = t1;
+          entry.location = p;
+          entry.normal = PVector.sub(p, this.center).normalize();
+          entry.entry = true;
+          entry.material = this.material;
+          
+          exit.t = t2;
+          exit.location = p;
+          exit.normal = PVector.sub(p, this.center).normalize();
+          exit.entry = false;
+          exit.material = this.material;
+          
+          result.add(entry);
+          result.add(exit);
+        }
+        
         return result;
     }
 }
