@@ -50,15 +50,21 @@ class Sphere implements SceneObject
           RayHit entry = new RayHit(); //<>//
           RayHit exit = new RayHit();
           
+          temp = PVector.mult(r.direction, t1);
+          PVector pEntry = PVector.add(r.origin, temp);
+          
+          temp = PVector.mult(r.direction, t2);
+          PVector pExit = PVector.add(r.origin, temp);
+          
           entry.t = t1;
-          entry.location = p;
-          entry.normal = PVector.sub(p, this.center).normalize();
+          entry.location = pEntry;
+          entry.normal = PVector.sub(pEntry, this.center).normalize();
           entry.entry = true;
           entry.material = this.material;
           
           exit.t = t2;
-          exit.location = p;
-          exit.normal = PVector.sub(p, this.center).normalize();
+          exit.location = pExit;
+          exit.normal = PVector.sub(pExit, this.center).normalize();
           exit.entry = false;
           exit.material = this.material;
           
@@ -69,15 +75,21 @@ class Sphere implements SceneObject
           RayHit entry = new RayHit();
           RayHit exit = new RayHit();
           
+          temp = PVector.mult(r.direction, t2);
+          PVector pEntry = PVector.add(r.origin, temp);
+          
+          temp = PVector.mult(r.direction, t1);
+          PVector pExit = PVector.add(r.origin, temp);
+          
           entry.t = t2;
-          entry.location = p;
-          entry.normal = PVector.sub(p, this.center).normalize();
+          entry.location = pEntry;
+          entry.normal = PVector.sub(pEntry, this.center).normalize();
           entry.entry = true;
           entry.material = this.material;
           
           exit.t = t1;
-          exit.location = p;
-          exit.normal = PVector.sub(p, this.center).normalize();
+          exit.location = pExit;
+          exit.normal = PVector.sub(pExit, this.center).normalize();
           exit.entry = false;
           exit.material = this.material;
           
