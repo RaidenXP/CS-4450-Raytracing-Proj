@@ -118,12 +118,33 @@ class Plane implements SceneObject
        this.scale = scale;
        
        // remove this line when you implement planes
-       throw new NotImplementedException("Planes not implemented yet");
+       // throw new NotImplementedException("Planes not implemented yet");
     }
     
     ArrayList<RayHit> intersect(Ray r)
     {
         ArrayList<RayHit> result = new ArrayList<RayHit>();
+        
+        if (!(PVector.dot(r.direction, this.normal) == 0)) {
+            float t = PVector.dot(PVector.sub(this.center, r.origin), this.normal) / PVector.dot(r.direction, this.normal);
+            
+            if (t > 0) { // should this be greater than or equal to 0?
+                RayHit rh = new RayHit();
+                rh.t = t;
+                rh.location = PVector.add(r.origin, PVector.mult(r.direction, t));
+                rh.normal = this.normal;
+                if (PVector.dot(r.direction, this.normal) < 0)
+                    rh.entry = true;
+                else
+                    rh.entry = false;
+                rh.material = this.material;
+                
+                result.add(rh);
+            }
+            
+            // Do we need a separate else if statement for when t = 0?
+        }
+        
         return result;
     }
 }
