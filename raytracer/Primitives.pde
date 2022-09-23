@@ -20,28 +20,18 @@ class Sphere implements SceneObject
         // TODO: Step 2: implement ray-sphere intersections
         
         // t_p = (c - o) * direction
-        PVector temp = PVector.sub(this.center, r.origin);
-        float projection = PVector.dot(temp, r.direction);
+        float projection = PVector.dot(PVector.sub(this.center, r.origin), r.direction);
         
         // p = o + t_p * direction
-        temp = PVector.mult(r.direction, projection);
-        PVector p = PVector.add(r.origin, temp);
+        PVector p = PVector.add(r.origin, PVector.mult(r.direction, projection));
         
         //calc the distance from p to c
-        temp = PVector.sub(this.center, p);
-        float distance = temp.mag();
+        float distance = PVector.sub(this.center, p).mag();
         
         //calc t-values
         //t = t_p +/- sqrt(sq(radius) - sq(distance))
         float t1 = projection + sqrt(sq(this.radius) - sq(distance));
         float t2 = projection - sqrt(sq(this.radius) - sq(distance));
-        
-        //if(!(Float.isNaN(t1)))
-        //{
-        //  print(t1);
-        //  print(" ");
-        //  println(t2);
-        //}
         
         if ((t1 < 0 || t2 < 0) && distance > this.radius){
           return result;
@@ -50,11 +40,9 @@ class Sphere implements SceneObject
           RayHit entry = new RayHit(); //<>//
           RayHit exit = new RayHit();
           
-          temp = PVector.mult(r.direction, t1);
-          PVector pEntry = PVector.add(r.origin, temp);
+          PVector pEntry = PVector.add(r.origin, PVector.mult(r.direction, t1));
           
-          temp = PVector.mult(r.direction, t2);
-          PVector pExit = PVector.add(r.origin, temp);
+          PVector pExit = PVector.add(r.origin, PVector.mult(r.direction, t2));
           
           entry.t = t1;
           entry.location = pEntry;
@@ -75,11 +63,9 @@ class Sphere implements SceneObject
           RayHit entry = new RayHit();
           RayHit exit = new RayHit();
           
-          temp = PVector.mult(r.direction, t2);
-          PVector pEntry = PVector.add(r.origin, temp);
+          PVector pEntry = PVector.add(r.origin, PVector.mult(r.direction, t2));
           
-          temp = PVector.mult(r.direction, t1);
-          PVector pExit = PVector.add(r.origin, temp);
+          PVector pExit = PVector.add(r.origin, PVector.mult(r.direction, t1));
           
           entry.t = t2;
           entry.location = pEntry;
@@ -125,7 +111,7 @@ class Plane implements SceneObject
     {
         ArrayList<RayHit> result = new ArrayList<RayHit>();
         
-        if (!(PVector.dot(r.direction, this.normal) == 0)) {
+        if ( PVector.dot(r.direction, this.normal) != 0) {
             float t = PVector.dot(PVector.sub(this.center, r.origin), this.normal) / PVector.dot(r.direction, this.normal);
             
             if (t > 0) { // should this be greater than or equal to 0?
@@ -172,12 +158,42 @@ class Triangle implements SceneObject
        this.material = material;
        
        // remove this line when you implement triangles
-       throw new NotImplementedException("Triangles not implemented yet");
+       //throw new NotImplementedException("Triangles not implemented yet");
     }
     
     ArrayList<RayHit> intersect(Ray r)
     {
         ArrayList<RayHit> result = new ArrayList<RayHit>();
+        
+        if ( PVector.dot(r.direction, this.normal) != 0) {
+          float t = PVector.dot(PVector.sub(this.v1, r.origin), this.normal) / PVector.dot(r.direction, this.normal);
+          PVector p = PVector.add(r.origin, PVector.mult(r.direction, t));
+    
+          //Computing UV
+          PVector e = PVector.sub(v2, v1);
+          PVector g_prime = PVector.sub(v3, v1);
+          PVector d = PVector.sub(p, v1);
+          float denom = (PVector.dot(e, e) * PVector.dot(g_prime, g_prime)) - (PVector.dot(e, g_prime) * PVector.dot(g_prime, e));
+          
+          float u = ((PVector.dot(g_prime, g_prime) * PVector.dot(d, e)) - (PVector.dot(e, g_prime) * PVector.dot(d, g_prime))) / denom;
+          float v = ((PVector.dot(e, e) * PVector.dot(d, g_prime)) - (PVector.dot(e, g_prime) * PVector.dot(d, e))) / denom;
+          
+          //Check to see if point is in triangle
+          if( u >= 0 && v >= 0 && u+v <= 1){
+            RayHit rh = new RayHit();
+            rh.t = t;
+            rh.location = p;
+            rh.normal = this.normal;
+            if (PVector.dot(r.direction, this.normal) < 0)
+                rh.entry = true;
+            else
+                rh.entry = false;
+            rh.material = this.material;
+              
+            result.add(rh);
+          }
+        }
+        
         return result;
     }
 }
