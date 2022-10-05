@@ -184,6 +184,8 @@ class Triangle implements SceneObject
             rh.t = t;
             rh.location = p;
             rh.normal = this.normal;
+            rh.u = u;
+            rh.v = v;
             if (PVector.dot(r.direction, this.normal) < 0)
                 rh.entry = true;
             else
@@ -213,7 +215,7 @@ class Cylinder implements SceneObject
        this.scale = scale;
        
        // remove this line when you implement cylinders
-       throw new NotImplementedException("Cylinders not implemented yet");
+       //throw new NotImplementedException("Cylinders not implemented yet");
     }
     
     Cylinder(float radius, float height, Material mat, float scale)
@@ -227,6 +229,67 @@ class Cylinder implements SceneObject
     ArrayList<RayHit> intersect(Ray r)
     {
         ArrayList<RayHit> result = new ArrayList<RayHit>();
+        
+        float a = sq(r.direction.x) + sq(r.direction.y);
+        float b = (2.0 * r.direction.x * r.origin.x) + (2.0 * r.direction.y * r.origin.y);
+        float c = sq(r.origin.x) + sq(r.origin.y) - sq(this.radius);
+        
+        float t1 = 0;
+        float t2 = 0;
+        
+        if( 2 * a != 0 && (sq(b) - (4.0 * a * c)) >= 0){
+          t1 = ((-1.0 * b) + (sqrt(sq(b) - (4.0 * a * c)))) / (2 * a);
+          t2 = ((-1.0 * b) - (sqrt(sq(b) - (4.0 * a * c)))) / (2 * a);
+        }
+        
+        if( t1 > 0 && t2 > 0 && t1 < t2){
+          RayHit entry = new RayHit();
+          RayHit exit = new RayHit();
+          
+          PVector pEntry = PVector.add(r.origin, PVector.mult(r.direction, t1));
+          
+          PVector pExit = PVector.add(r.origin, PVector.mult(r.direction, t2));
+          
+          entry.t = t1;
+          entry.location = pEntry;
+          entry.normal = new PVector(pEntry.x, pEntry.y, 0).normalize();
+          entry.entry = true;
+          entry.material = this.material;
+          
+          exit.t = t2;
+          exit.location = pExit;
+          exit.normal = new PVector(pExit.x, pExit.y, 0).normalize();
+          exit.entry = false;
+          exit.material = this.material;
+          
+          result.add(entry);
+          result.add(exit);
+        }
+        else if( t1 > 0 && t2 > 0 && t1 > t2)
+        {
+          RayHit entry = new RayHit();
+          RayHit exit = new RayHit();
+          
+          PVector pEntry = PVector.add(r.origin, PVector.mult(r.direction, t2));
+          
+          PVector pExit = PVector.add(r.origin, PVector.mult(r.direction, t1));
+          
+          entry.t = t2;
+          entry.location = pEntry;
+          entry.normal = new PVector(pEntry.x, pEntry.y, 0).normalize();
+          entry.entry = true;
+          entry.material = this.material;
+          
+          exit.t = t1;
+          exit.location = pExit;
+          exit.normal = new PVector(pExit.x, pExit.y, 0).normalize();
+          exit.entry = false;
+          exit.material = this.material;
+          
+          result.add(entry);
+          result.add(exit);
+        }
+        
         return result;
     }
 }
