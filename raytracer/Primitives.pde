@@ -33,10 +33,13 @@ class Sphere implements SceneObject
         float t1 = projection + sqrt(sq(this.radius) - sq(distance));
         float t2 = projection - sqrt(sq(this.radius) - sq(distance));
         
-        if ((t1 < 0 || t2 < 0) && distance > this.radius){
-          return result;
+        if(t2 < t1){
+          float temp = t1;
+          t1 = t2;
+          t2 = temp;
         }
-        else if (t1 < t2){
+        
+        if ((t1 > 0 && t2 > 0) && distance < this.radius){
           RayHit entry = new RayHit(); //<>//
           RayHit exit = new RayHit();
           
@@ -51,29 +54,6 @@ class Sphere implements SceneObject
           entry.material = this.material;
           
           exit.t = t2;
-          exit.location = pExit;
-          exit.normal = PVector.sub(pExit, this.center).normalize();
-          exit.entry = false;
-          exit.material = this.material;
-          
-          result.add(entry);
-          result.add(exit);
-        }
-        else if (t2 < t1){
-          RayHit entry = new RayHit();
-          RayHit exit = new RayHit();
-          
-          PVector pEntry = PVector.add(r.origin, PVector.mult(r.direction, t2));
-          
-          PVector pExit = PVector.add(r.origin, PVector.mult(r.direction, t1));
-          
-          entry.t = t2;
-          entry.location = pEntry;
-          entry.normal = PVector.sub(pEntry, this.center).normalize();
-          entry.entry = true;
-          entry.material = this.material;
-          
-          exit.t = t1;
           exit.location = pExit;
           exit.normal = PVector.sub(pExit, this.center).normalize();
           exit.entry = false;
@@ -234,15 +214,21 @@ class Cylinder implements SceneObject
         float b = (2.0 * r.direction.x * r.origin.x) + (2.0 * r.direction.y * r.origin.y);
         float c = sq(r.origin.x) + sq(r.origin.y) - sq(this.radius);
         
-        float t1 = 0;
-        float t2 = 0;
+        float t1 = 0.0;
+        float t2 = 0.0;
         
         if( 2 * a != 0 && (sq(b) - (4.0 * a * c)) >= 0){
           t1 = ((-1.0 * b) + (sqrt(sq(b) - (4.0 * a * c)))) / (2 * a);
           t2 = ((-1.0 * b) - (sqrt(sq(b) - (4.0 * a * c)))) / (2 * a);
         }
         
-        if( t1 > 0 && t2 > 0 && t1 < t2){
+        if(t2 < t1){
+         float temp = t1;
+         t1 = t2;
+         t2 = temp;
+        }
+        
+        if( t1 > 0 && t2 > 0){
           RayHit entry = new RayHit();
           RayHit exit = new RayHit();
           
@@ -257,30 +243,6 @@ class Cylinder implements SceneObject
           entry.material = this.material;
           
           exit.t = t2;
-          exit.location = pExit;
-          exit.normal = new PVector(pExit.x, pExit.y, 0).normalize();
-          exit.entry = false;
-          exit.material = this.material;
-          
-          result.add(entry);
-          result.add(exit);
-        }
-        else if( t1 > 0 && t2 > 0 && t1 > t2)
-        {
-          RayHit entry = new RayHit();
-          RayHit exit = new RayHit();
-          
-          PVector pEntry = PVector.add(r.origin, PVector.mult(r.direction, t2));
-          
-          PVector pExit = PVector.add(r.origin, PVector.mult(r.direction, t1));
-          
-          entry.t = t2;
-          entry.location = pEntry;
-          entry.normal = new PVector(pEntry.x, pEntry.y, 0).normalize();
-          entry.entry = true;
-          entry.material = this.material;
-          
-          exit.t = t1;
           exit.location = pExit;
           exit.normal = new PVector(pExit.x, pExit.y, 0).normalize();
           exit.entry = false;
