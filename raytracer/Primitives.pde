@@ -232,11 +232,27 @@ class Cylinder implements SceneObject
             RayHit entry = new RayHit();
             RayHit exit = new RayHit();
             
-            PVector pEntry = PVector.add(r.origin, PVector.mult(r.direction, t1));
+            PVector pEntry = PVector.add(r.origin, PVector.mult(r.direction, t1)); //<>//
             
             PVector pExit = PVector.add(r.origin, PVector.mult(r.direction, t2));
             
-            if (pEntry.z > this.height){
+            if (this.height == -1) {
+                entry.t = t1;
+                entry.location = pEntry;
+                entry.normal = new PVector(pEntry.x, pEntry.y, 0).normalize();
+                entry.entry = true;
+                entry.material = this.material;
+                
+                exit.t = t2;
+                exit.location = pExit;
+                exit.normal = new PVector(pExit.x, pExit.y, 0).normalize();
+                exit.entry = false;
+                exit.material = this.material;
+                
+                result.add(entry);
+                result.add(exit);
+            }
+            else if (pEntry.z > this.height){
                 PVector top_n = new PVector(0,0,1);                // Top cap normal
                 PVector top_pl = new PVector(0, 0, this.height);   // Center point for the top plane 
                 
