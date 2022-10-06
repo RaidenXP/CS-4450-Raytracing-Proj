@@ -40,7 +40,7 @@ class Sphere implements SceneObject
         } //<>//
         
         if ((t1 > 0 && t2 > 0) && distance < this.radius){
-          RayHit entry = new RayHit(); //<>//
+          RayHit entry = new RayHit(); //<>// //<>//
           RayHit exit = new RayHit();
           
           PVector pEntry = PVector.add(r.origin, PVector.mult(r.direction, t1));
@@ -229,115 +229,105 @@ class Cylinder implements SceneObject
         }
         
         if( t1 > 0 && t2 > 0){
-            RayHit entry = new RayHit();
-            RayHit exit = new RayHit();
-            
-            PVector pEntry = PVector.add(r.origin, PVector.mult(r.direction, t1)); //<>//
-            
-            PVector pExit = PVector.add(r.origin, PVector.mult(r.direction, t2));
-            
-            if (this.height == -1) {
-                entry.t = t1;
-                entry.location = pEntry;
-                entry.normal = new PVector(pEntry.x, pEntry.y, 0).normalize();
-                entry.entry = true;
-                entry.material = this.material;
-                
-                exit.t = t2;
-                exit.location = pExit;
-                exit.normal = new PVector(pExit.x, pExit.y, 0).normalize();
-                exit.entry = false;
-                exit.material = this.material;
-                
-                result.add(entry);
-                result.add(exit);
-            }
-            else if (pEntry.z > this.height){
-                PVector top_n = new PVector(0,0,1);                // Top cap normal
-                PVector top_pl = new PVector(0, 0, this.height);   // Center point for the top plane 
-                
-                if (PVector.dot(r.direction, top_n) != 0) {
-                    float top_t = PVector.dot(PVector.sub(top_pl, r.origin), top_n) / PVector.dot(r.direction, top_n);
+          RayHit entry = new RayHit();
+          RayHit exit = new RayHit();
+          
+          PVector pEntry = PVector.add(r.origin, PVector.mult(r.direction, t1));
+          
+          PVector pExit = PVector.add(r.origin, PVector.mult(r.direction, t2));
+          
+          if((pEntry.z <= this.height && pEntry.z >= 0) || this.height == -1){
+            entry.t = t1;
+            entry.location = pEntry;
+            entry.normal = new PVector(pEntry.x, pEntry.y, 0).normalize();
+            entry.entry = true;
+            entry.material = this.material;
+
+            result.add(entry);
+          }
+          else if(pEntry.z > this.height){
+            if(PVector.dot(r.direction, new PVector(0,0,1)) != 0){
+               float tTop = PVector.dot(PVector.sub(new PVector(0, 0, this.height), r.origin), new PVector(0,0,1)) / PVector.dot(r.direction, new PVector(0,0,1));
+               
+               if(tTop > 0){
+                 PVector top_entry = PVector.add(r.origin, PVector.mult(r.direction, tTop));
+                 if(sq(top_entry.x) + sq(top_entry.y) <= sq(this.radius)){
+                    entry.t = tTop;
+                    entry.location = top_entry;
+                    entry.normal = new PVector(0,0,1);
+                    entry.entry = true;
+                    entry.material = this.material;
                     
-                    if (top_t > 0) { // should this be greater than or equal to 0?
-                        PVector top_entry = PVector.add(r.origin, PVector.mult(r.direction, top_t));
-                        
-                        if ((sq(top_entry.x) + sq(top_entry.y)) <= sq(this.radius)) {
-                            RayHit rh = new RayHit();
-                            rh.t = top_t;
-                            rh.location = top_entry;
-                            rh.normal = top_n;
-                            if (PVector.dot(r.direction, top_n) < 0)
-                                rh.entry = true;
-                            else
-                                rh.entry = false;
-                            rh.material = this.material;
-                            
-                            // Need to reinitialize exit again
-                            exit.t = t2;
-                            exit.location = pExit;
-                            exit.normal = new PVector(pExit.x, pExit.y, 0).normalize();
-                            exit.entry = false;
-                            exit.material = this.material;
-                            
-                            result.add(rh);
-                            result.add(exit);
-                        }
-                    }
-                    // Do we need a separate else if statement for when t = 0?
-                }
+                    result.add(entry);
+                 } 
+               }
             }
-            else if (pEntry.z < 0) {
-                PVector bot_n = new PVector(0, 0, -1);      // Bottom cap normal
-                PVector bot_pl = new PVector(0, 0, 0);      // Center point for the bottom plane 
-                
-                if (PVector.dot(r.direction, bot_n) != 0) {
-                    float bot_t = PVector.dot(PVector.sub(bot_pl, r.origin), bot_n) / PVector.dot(r.direction, bot_n);
+          }
+          else if(pEntry.z < 0){
+            if(PVector.dot(r.direction, new PVector(0,0,-1)) != 0){
+               float tBot = PVector.dot(PVector.sub(new PVector(0, 0, 0), r.origin), new PVector(0,0,-1)) / PVector.dot(r.direction, new PVector(0,0,-1));
+               
+               if(tBot > 0){
+                 PVector bot_entry = PVector.add(r.origin, PVector.mult(r.direction, tBot));
+                 if(sq(bot_entry.x) + sq(bot_entry.y) <= sq(this.radius)){
+                    entry.t = tBot;
+                    entry.location = bot_entry;
+                    entry.normal = new PVector(0,0,-1);
+                    entry.entry = true;
+                    entry.material = this.material;
                     
-                    if (bot_t > 0) { // should this be greater than or equal to 0?
-                        PVector bot_entry = PVector.add(r.origin, PVector.mult(r.direction, bot_t));
-                        
-                        if ((sq(bot_entry.x) + sq(bot_entry.y)) <= sq(this.radius)) {
-                            RayHit rh = new RayHit();
-                            rh.t = bot_t;
-                            rh.location = bot_entry;
-                            rh.normal = bot_n;
-                            if (PVector.dot(r.direction, bot_n) < 0)
-                                rh.entry = true;
-                            else
-                                rh.entry = false;
-                            rh.material = this.material;
-                            
-                            // Need to reinitialize exit again
-                            exit.t = t2;
-                            exit.location = pExit;
-                            exit.normal = new PVector(pExit.x, pExit.y, 0).normalize();
-                            exit.entry = false;
-                            exit.material = this.material;
-                            
-                            result.add(rh);
-                            result.add(exit);
-                        }
-                    }
-                    // Do we need a separate else if statement for when t = 0?
-                }
+                    result.add(entry);
+                 } 
+               }
             }
-            else {
-                entry.t = t1;
-                entry.location = pEntry;
-                entry.normal = new PVector(pEntry.x, pEntry.y, 0).normalize();
-                entry.entry = true;
-                entry.material = this.material;
-                
-                exit.t = t2;
-                exit.location = pExit;
-                exit.normal = new PVector(pExit.x, pExit.y, 0).normalize();
-                exit.entry = false;
-                exit.material = this.material;
-                
-                result.add(entry);
-                result.add(exit);
+          }
+
+          if ((pExit.z <= this.height && pExit.z >= 0) || this.height == -1){
+            exit.t = t2;
+            exit.location = pExit;
+            exit.normal = new PVector(pExit.x, pExit.y, 0).normalize();
+            exit.entry = false;
+            exit.material = this.material;
+
+            result.add(exit);
+          }
+          else if(pExit.z > this.height){
+            if(PVector.dot(r.direction, new PVector(0,0,1)) != 0){
+               float tTop = PVector.dot(PVector.sub(new PVector(0, 0, this.height), r.origin), new PVector(0,0,1)) / PVector.dot(r.direction, new PVector(0,0,1));
+               
+               if(tTop > 0){
+                 PVector top_exit = PVector.add(r.origin, PVector.mult(r.direction, tTop));
+                 if(sq(top_exit.x) + sq(top_exit.y) <= sq(this.radius)){
+                    exit.t = tTop;
+                    exit.location = top_exit;
+                    exit.normal = new PVector(0,0,1);
+                    exit.entry = false;
+                    exit.material = this.material;
+                    
+                    result.add(exit);
+                 } 
+               }
             }
+          }
+          else if(pExit.z < 0){
+            if(PVector.dot(r.direction, new PVector(0,0,-1)) != 0){
+               float tBot = PVector.dot(PVector.sub(new PVector(0, 0, 0), r.origin), new PVector(0,0,-1)) / PVector.dot(r.direction, new PVector(0,0,-1));
+               
+               if(tBot > 0){
+                 PVector bot_exit = PVector.add(r.origin, PVector.mult(r.direction, tBot));
+                 if(sq(bot_exit.x) + sq(bot_exit.y) <= sq(this.radius)){
+                    exit.t = tBot;
+                    exit.location = bot_exit;
+                    exit.normal = new PVector(0,0,-1);
+                    exit.entry = false;
+                    exit.material = this.material;
+                    
+                    result.add(entry);
+                 } 
+               }
+            }
+          }        
+
         }
         
         return result;
