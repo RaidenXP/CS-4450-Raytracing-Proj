@@ -37,7 +37,7 @@ class Sphere implements SceneObject
           float temp = t1;
           t1 = t2;
           t2 = temp;
-        }
+        } //<>//
         
         if ((t1 > 0 && t2 > 0) && distance < this.radius){
           RayHit entry = new RayHit(); //<>// //<>//
@@ -223,9 +223,9 @@ class Cylinder implements SceneObject
         }
         
         if(t2 < t1){
-         float temp = t1;
-         t1 = t2;
-         t2 = temp;
+            float temp = t1;
+            t1 = t2;
+            t2 = temp;
         }
         
         if( t1 > 0 && t2 > 0){
@@ -327,7 +327,7 @@ class Cylinder implements SceneObject
                }
             }
           }        
-        
+
         }
         
         return result;
