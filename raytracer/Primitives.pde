@@ -16,7 +16,7 @@ class Sphere implements SceneObject
     
     ArrayList<RayHit> intersect(Ray r)
     {
-        ArrayList<RayHit> result = new ArrayList<RayHit>(); //<>// //<>//
+        ArrayList<RayHit> result = new ArrayList<RayHit>(); //<>// //<>// //<>//
         // TODO: Step 2: implement ray-sphere intersections
         
         // t_p = (c - o) * direction
@@ -40,7 +40,7 @@ class Sphere implements SceneObject
         } //<>//
         
         if ((t1 > 0 && t2 > 0) && distance < this.radius){
-          RayHit entry = new RayHit(); //<>// //<>//
+          RayHit entry = new RayHit(); //<>// //<>// //<>//
           RayHit exit = new RayHit();
           
           PVector pEntry = PVector.add(r.origin, PVector.mult(r.direction, t1));
@@ -236,6 +236,7 @@ class Cylinder implements SceneObject
           
           PVector pExit = PVector.add(r.origin, PVector.mult(r.direction, t2));
           
+          // check for entry of through the cylinder
           if((pEntry.z <= this.height && pEntry.z >= 0) || this.height == -1){
             entry.t = t1;
             entry.location = pEntry;
@@ -282,6 +283,7 @@ class Cylinder implements SceneObject
             }
           }
 
+          // check for the exit of the cylinder
           if ((pExit.z <= this.height && pExit.z >= 0) || this.height == -1){
             exit.t = t2;
             exit.location = pExit;
