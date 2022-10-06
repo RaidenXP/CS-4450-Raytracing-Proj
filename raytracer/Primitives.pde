@@ -236,20 +236,96 @@ class Cylinder implements SceneObject
           
           PVector pExit = PVector.add(r.origin, PVector.mult(r.direction, t2));
           
-          entry.t = t1;
-          entry.location = pEntry;
-          entry.normal = new PVector(pEntry.x, pEntry.y, 0).normalize();
-          entry.entry = true;
-          entry.material = this.material;
+          if(pEntry.z < this.height && pEntry.z > 0){
+            entry.t = t1;
+            entry.location = pEntry;
+            entry.normal = new PVector(pEntry.x, pEntry.y, 0).normalize();
+            entry.entry = true;
+            entry.material = this.material;
+            
+            result.add(entry);
+          }
+          else if (sq(pEntry.x) + sq(pEntry.y) <= sq(this.radius)){
+            float tTop = 0.0;
+            float tBottom = 0.0;
+            
+            if(PVector.dot(r.direction, new PVector(0,0,1)) != 0){
+              tTop = PVector.dot(PVector.sub(new PVector(0, 0, this.height), r.origin), new PVector(0,0,1)) / PVector.dot(r.direction, new PVector(0,0,1));
+            }
+            else if(PVector.dot(r.direction, new PVector(0,0,-1)) != 0){
+              tBottom = PVector.dot(PVector.sub(new PVector(0, 0, 0), r.origin), new PVector(0,0,-1)) / PVector.dot(r.direction, new PVector(0,0,-1));
+            }
+            
+            if (tTop > 0) { // should this be greater than or equal to 0?
+                entry.t = tTop;
+                entry.location = PVector.add(r.origin, PVector.mult(r.direction, tTop));
+                entry.normal = new PVector(0,0,1);
+                if (PVector.dot(r.direction, new PVector(0,0,1)) < 0)
+                    entry.entry = true;
+                else
+                    entry.entry = false;
+                entry.material = this.material;
+                
+                result.add(entry);
+            } 
+            else if(tBottom > 0){
+                entry.t = tBottom;
+                entry.location = PVector.add(r.origin, PVector.mult(r.direction, tBottom));
+                entry.normal = new PVector(0,0,-1);
+                if (PVector.dot(r.direction, new PVector(0,0,-1)) < 0)
+                    entry.entry = true;
+                else
+                    entry.entry = false;
+                entry.material = this.material;
+                
+                result.add(entry);
+            }
+            
+          }
           
-          exit.t = t2;
-          exit.location = pExit;
-          exit.normal = new PVector(pExit.x, pExit.y, 0).normalize();
-          exit.entry = false;
-          exit.material = this.material;
-          
-          result.add(entry);
-          result.add(exit);
+          if (pExit.z < this.height && pExit.z > 0){
+            exit.t = t2;
+            exit.location = pExit;
+            exit.normal = new PVector(pExit.x, pExit.y, 0).normalize();
+            exit.entry = false;
+            exit.material = this.material;
+            
+            result.add(exit);
+          }
+          else if (PVector.dot(r.direction, new PVector(0,0,1)) != 0 || PVector.dot(r.direction, new PVector(0,0,-1)) != 0){
+            float tTop = PVector.dot(PVector.sub(new PVector(0, 0, this.height), r.origin), new PVector(0,0,1)) / PVector.dot(r.direction, new PVector(0,0,1));
+            float tBottom = PVector.dot(PVector.sub(new PVector(0, 0, 0), r.origin), new PVector(0,0,-1)) / PVector.dot(r.direction, new PVector(0,0,-1));
+            
+            float t = 0.0;
+            
+            if(tTop > 0 && tBottom > 0){
+              if(tTop < tBottom){
+                t = tTop;
+              }
+              else{
+                t = tBottom;
+              }
+            } 
+            else if (tTop > 0){
+              t = tTop;
+            } 
+            else if (tBottom > 0){
+              t = tBottom;
+            }
+            
+            if (t > 0 && sq(pExit.x) + sq(pExit.y) <= sq(this.radius)) { // should this be greater than or equal to 0?
+                exit.t = t;
+                exit.location = PVector.add(r.origin, PVector.mult(r.direction, t));
+                exit.normal = new PVector(0,0,1);
+                if (PVector.dot(r.direction, new PVector(0,0,1)) < 0)
+                    exit.entry = true;
+                else
+                    exit.entry = false;
+                exit.material = this.material;
+                
+                result.add(exit);
+            }
+          }
         }
         
         return result;
