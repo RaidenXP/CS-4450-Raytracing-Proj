@@ -180,6 +180,156 @@ class Triangle implements SceneObject
     }
 }
 
+abstract class Quadrics
+{
+    float radius;
+    float height;
+    Material material;
+    float scale;
+    
+    Quadrics(float radius, Material mat, float scale)
+    {
+        this.material = mat;
+        this.scale = scale;
+        this.height = -1;
+        this.radius = radius;
+    }
+    
+    Quadrics(float radius, float height, Material mat, float scale)
+    {
+        this.material = mat;
+        this.scale = scale;
+        this.height = height;
+        this.radius = radius;
+    }
+    
+    abstract float calc_a(Ray r);
+    abstract float calc_b(Ray r);
+    abstract float calc_c(Ray r);
+    ArrayList<RayHit> myFunction(float a, float b, float c, Ray r) // Temporary function name. 
+    {
+        ArrayList<RayHit> result = new ArrayList<RayHit>();
+        
+        float t1 = 0.0;
+        float t2 = 0.0;
+        
+        if( 2 * a != 0 && (sq(b) - (4.0 * a * c)) >= 0){
+          t1 = ((-1.0 * b) + (sqrt(sq(b) - (4.0 * a * c)))) / (2 * a);
+          t2 = ((-1.0 * b) - (sqrt(sq(b) - (4.0 * a * c)))) / (2 * a);
+        }
+        
+        if(t2 < t1){
+            float temp = t1;
+            t1 = t2;
+            t2 = temp;
+        }
+        
+        if( t1 > 0 && t2 > 0){
+          RayHit entry = new RayHit();
+          RayHit exit = new RayHit();
+          
+          PVector pEntry = PVector.add(r.origin, PVector.mult(r.direction, t1));
+          
+          PVector pExit = PVector.add(r.origin, PVector.mult(r.direction, t2));
+          
+          // check for entry of through the cylinder
+          if((pEntry.z <= this.height && pEntry.z >= 0) || this.height == -1){
+            entry.t = t1;
+            entry.location = pEntry;
+            entry.normal = new PVector(pEntry.x, pEntry.y, 0).normalize();
+            entry.entry = true;
+            entry.material = this.material;
+
+            result.add(entry);
+          }
+          else if(pEntry.z > this.height){
+            if(PVector.dot(r.direction, new PVector(0,0,1)) != 0){
+               float tTop = PVector.dot(PVector.sub(new PVector(0, 0, this.height), r.origin), new PVector(0,0,1)) / PVector.dot(r.direction, new PVector(0,0,1));
+               
+               if(tTop > 0){
+                 PVector top_entry = PVector.add(r.origin, PVector.mult(r.direction, tTop));
+                 if(sq(top_entry.x) + sq(top_entry.y) <= sq(this.radius)){
+                    entry.t = tTop;
+                    entry.location = top_entry;
+                    entry.normal = new PVector(0,0,1);
+                    entry.entry = true;
+                    entry.material = this.material;
+                    
+                    result.add(entry);
+                 } 
+               }
+            }
+          }
+          else if(pEntry.z < 0){
+            if(PVector.dot(r.direction, new PVector(0,0,-1)) != 0){
+               float tBot = PVector.dot(PVector.sub(new PVector(0, 0, 0), r.origin), new PVector(0,0,-1)) / PVector.dot(r.direction, new PVector(0,0,-1));
+               
+               if(tBot > 0){
+                 PVector bot_entry = PVector.add(r.origin, PVector.mult(r.direction, tBot));
+                 if(sq(bot_entry.x) + sq(bot_entry.y) <= sq(this.radius)){
+                    entry.t = tBot;
+                    entry.location = bot_entry;
+                    entry.normal = new PVector(0,0,-1);
+                    entry.entry = true;
+                    entry.material = this.material;
+                    
+                    result.add(entry);
+                 } 
+               }
+            }
+          }
+
+          // check for the exit of the cylinder
+          if ((pExit.z <= this.height && pExit.z >= 0) || this.height == -1){
+            exit.t = t2;
+            exit.location = pExit;
+            exit.normal = new PVector(pExit.x, pExit.y, 0).normalize();
+            exit.entry = false;
+            exit.material = this.material;
+
+            result.add(exit);
+          }
+          else if(pExit.z > this.height){
+            if(PVector.dot(r.direction, new PVector(0,0,1)) != 0){
+               float tTop = PVector.dot(PVector.sub(new PVector(0, 0, this.height), r.origin), new PVector(0,0,1)) / PVector.dot(r.direction, new PVector(0,0,1));
+               
+               if(tTop > 0){
+                 PVector top_exit = PVector.add(r.origin, PVector.mult(r.direction, tTop));
+                 if(sq(top_exit.x) + sq(top_exit.y) <= sq(this.radius)){
+                    exit.t = tTop;
+                    exit.location = top_exit;
+                    exit.normal = new PVector(0,0,1);
+                    exit.entry = false;
+                    exit.material = this.material;
+                    
+                    result.add(exit);
+                 } 
+               }
+            }
+          }
+          else if(pExit.z < 0){
+            if(PVector.dot(r.direction, new PVector(0,0,-1)) != 0){
+               float tBot = PVector.dot(PVector.sub(new PVector(0, 0, 0), r.origin), new PVector(0,0,-1)) / PVector.dot(r.direction, new PVector(0,0,-1));
+               
+               if(tBot > 0){
+                 PVector bot_exit = PVector.add(r.origin, PVector.mult(r.direction, tBot));
+                 if(sq(bot_exit.x) + sq(bot_exit.y) <= sq(this.radius)){
+                    exit.t = tBot;
+                    exit.location = bot_exit;
+                    exit.normal = new PVector(0,0,-1);
+                    exit.entry = false;
+                    exit.material = this.material;
+                    
+                    result.add(entry);    // Should this be result.add(exit);
+                 } 
+               }
+            }
+          }        
+        }       
+        return result;
+    }
+}
+
 class Cylinder implements SceneObject
 {
     float radius;
