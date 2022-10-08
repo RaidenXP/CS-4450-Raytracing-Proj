@@ -367,26 +367,42 @@ class Cylinder extends Quadrics implements SceneObject
     }
 }
 
-class Cone implements SceneObject
+class Cone extends Quadrics implements SceneObject
 {
-    Material material;
-    float scale;
-    
     Cone(Material mat, float scale)
     {
-        this.material = mat;
-        this.scale = scale;
+        super(-1, mat, scale);
+        //this.material = mat;
+        //this.scale = scale;
         
         // remove this line when you implement cones
-       throw new NotImplementedException("Cones not implemented yet");
+        //throw new NotImplementedException("Cones not implemented yet");
+    }
+    
+    float calc_a(Ray r)
+    {
+        return sq(r.direction.x) + sq(r.direction.y) - sq(r.direction.z);
+    }
+    
+    float calc_b(Ray r)
+    {
+        return (2.0 * r.direction.x * r.origin.x) + (2.0 * r.direction.y * r.origin.y) - (2.0 * r.direction.z * r.origin.z);
+    }
+    
+    float calc_c(Ray r)
+    {
+        return sq(r.origin.x) + sq(r.origin.y) - sq(r.origin.z);
     }
     
     ArrayList<RayHit> intersect(Ray r)
     {
-        ArrayList<RayHit> result = new ArrayList<RayHit>();
-        return result;
+        //ArrayList<RayHit> result = new ArrayList<RayHit>();
+        float a = calc_a(r);
+        float b = calc_b(r);
+        float c = calc_c(r);
+        
+        return myFunction(a, b, c, r);
     }
-   
 }
 
 class Paraboloid implements SceneObject
