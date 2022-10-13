@@ -164,8 +164,6 @@ class Triangle implements SceneObject
             rh.t = t;
             rh.location = p;
             rh.normal = this.normal;
-            rh.u = u;
-            rh.v = v;
             if (PVector.dot(r.direction, this.normal) < 0)
                 rh.entry = true;
             else
