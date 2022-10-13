@@ -19,12 +19,13 @@ class Union implements SceneObject
   {
     this.children = children;
     // remove this line when you implement true unions
-    println("WARNING: Using 'fake' union");
+    // println("WARNING: Using 'fake' union");
+    println("WARNING: \"True\" Union not fully tested");
   }
 
   ArrayList<RayHit> intersect(Ray r)
   {
-     
+     int depth = 0;
      ArrayList<RayHit> hits = new ArrayList<RayHit>();
      
      // Reminder: this is *not* a true union
@@ -32,10 +33,34 @@ class Union implements SceneObject
      // and exit-hits alternate
      for (SceneObject sc : children)
      {
-       hits.addAll(sc.intersect(r));
+       // rHits contains the ray hits for one object. If the first hit that intersects
+       // the scene object is an exit, that means we are inside an object so we increment
+       // the depth. This might be wrong.
+       ArrayList<RayHit> rHits = sc.intersect(r);
+       if (rHits.size() != 0 && rHits.get(0).entry == false)
+           depth++;
+       hits.addAll(rHits);
      }
      hits.sort(new HitCompare());
-     return hits;
+     
+     // Iterate through the sorted ray hits and add appropriate hits to the result
+     // according to the Union algorithm.
+     ArrayList<RayHit> result = new ArrayList<RayHit>();
+     for (RayHit rh : hits)
+     {
+         if (rh.entry == true) {
+             if (depth == 0)
+                 result.add(rh);
+             depth++;
+         }
+         else {
+             if (depth == 1)
+                 result.add(rh);
+             depth--;
+         }
+     }
+     
+     return result;
   }
   
 }
