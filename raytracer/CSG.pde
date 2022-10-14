@@ -90,6 +90,14 @@ class Intersection implements SceneObject
        ArrayList<RayHit> rHits = sc.intersect(r);
        if (rHits.size() != 0 && rHits.get(0).entry == false)
            depth++;
+       /*    
+       if (rHits.size() == 0) {
+           RayHit rh = new RayHit();
+           rh.t = Float.POSITIVE_INFINITY;
+           rh.entry = false;
+           rHits.add(rh);
+       }*/
+       
        hits.addAll(rHits);
      }
      hits.sort(new HitCompare());
@@ -106,7 +114,7 @@ class Intersection implements SceneObject
              depth++;
          }
          else {
-             if (depth == n)
+             if (depth == n)//|| (rh.t == Float.POSITIVE_INFINITY))
                  result.add(rh);
              depth--;
          }
