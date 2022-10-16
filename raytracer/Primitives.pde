@@ -90,8 +90,9 @@ class Plane implements SceneObject
     ArrayList<RayHit> intersect(Ray r)
     {
         ArrayList<RayHit> result = new ArrayList<RayHit>();
+        float test = PVector.dot(PVector.sub(this.center, r.origin), this.normal);
         
-        if ( PVector.dot(r.direction, this.normal) != 0) {
+        if (PVector.dot(r.direction, this.normal) != 0) {
             float t = PVector.dot(PVector.sub(this.center, r.origin), this.normal) / PVector.dot(r.direction, this.normal);
             
             if (t > 0) { // should this be greater than or equal to 0?
@@ -107,11 +108,21 @@ class Plane implements SceneObject
                 
                 result.add(rh);
             }
+            /*
+            else if (t < 0) {
+                RayHit rh = new RayHit();
+                rh.t = Float.POSITIVE_INFINITY;
+                rh.location = this.center;
+                rh.normal = this.normal;
+                rh.entry = false;
+                rh.material = this.material;
+                
+                result.add(rh);
+            }*/
             
             // Do we need a separate else if statement for when t = 0?
         }
-        
-        else if ((PVector.dot(r.direction, this.normal) == 0) && (PVector.dot(PVector.sub(this.center, r.origin), this.normal) > 0)){
+        if ((PVector.dot(r.direction, this.normal) <= 0) && (test > 0)){
             RayHit rh = new RayHit();
             rh.t = Float.POSITIVE_INFINITY;
             rh.location = this.center; //PVector.add(r.origin, PVector.mult(r.direction, Float.POSITIVE_INFINITY));

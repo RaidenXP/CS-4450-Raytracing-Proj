@@ -89,8 +89,6 @@ class Intersection implements SceneObject
        // the depth. This might be wrong.
        ArrayList<RayHit> rHits = sc.intersect(r);
        if ((rHits.size() > 0) && (rHits.get(0).entry == false)){
-           if ((rHits.get(0).entry == false) && (rHits.get(0).t == Float.POSITIVE_INFINITY))
-               println("We're good");
            depth++;
        }
        /*    
