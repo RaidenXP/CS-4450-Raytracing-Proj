@@ -37,7 +37,7 @@ class Union implements SceneObject
        // the scene object is an exit, that means we are inside an object so we increment
        // the depth. This might be wrong.
        ArrayList<RayHit> rHits = sc.intersect(r);
-       if (rHits.size() != 0 && rHits.get(0).entry == false)
+       if ((rHits.size() != 0) && (rHits.get(0).entry == false))
            depth++;
        hits.addAll(rHits);
      }
@@ -88,8 +88,11 @@ class Intersection implements SceneObject
        // the scene object is an exit, that means we are inside an object so we increment
        // the depth. This might be wrong.
        ArrayList<RayHit> rHits = sc.intersect(r);
-       if (rHits.size() != 0 && rHits.get(0).entry == false)
+       if ((rHits.size() > 0) && (rHits.get(0).entry == false)){
+           if ((rHits.get(0).entry == false) && (rHits.get(0).t == Float.POSITIVE_INFINITY))
+               println("We're good");
            depth++;
+       }
        /*    
        if (rHits.size() == 0) {
            RayHit rh = new RayHit();
@@ -103,7 +106,7 @@ class Intersection implements SceneObject
      hits.sort(new HitCompare());
      
      // Iterate through the sorted ray hits and add appropriate hits to the result
-     // according to the Union algorithm.
+     // according to the Intersection algorithm.
      ArrayList<RayHit> result = new ArrayList<RayHit>();
      int n = this.elements.length;
      for (RayHit rh : hits)
@@ -114,7 +117,7 @@ class Intersection implements SceneObject
              depth++;
          }
          else {
-             if (depth == n)//|| (rh.t == Float.POSITIVE_INFINITY))
+             if (depth == n) //|| (rh.t == Float.POSITIVE_INFINITY))
                  result.add(rh);
              depth--;
          }

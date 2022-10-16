@@ -110,10 +110,11 @@ class Plane implements SceneObject
             
             // Do we need a separate else if statement for when t = 0?
         }
-        else {
+        
+        else if ((PVector.dot(r.direction, this.normal) == 0) && (PVector.dot(PVector.sub(this.center, r.origin), this.normal) > 0)){
             RayHit rh = new RayHit();
             rh.t = Float.POSITIVE_INFINITY;
-            rh.location = this.center;
+            rh.location = this.center; //PVector.add(r.origin, PVector.mult(r.direction, Float.POSITIVE_INFINITY));
             rh.normal = this.normal;
             rh.entry = false;
             rh.material = this.material;

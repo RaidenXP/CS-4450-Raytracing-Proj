@@ -153,7 +153,13 @@ class RayTracer
       
       ArrayList<RayHit> hits = scene.root.intersect(pixelRay);
       if(hits.size() > 0){
-        return scene.lighting.getColor(hits.get(0), scene, pixelRay.origin);
+        // The while loop is used for not displaying objects that we are inside of
+        int i = 0;
+        while ((i < hits.size()) && (hits.get(i).entry == false)) {
+          i++;
+        }
+        if (i < hits.size())
+            return scene.lighting.getColor(hits.get(i), scene, pixelRay.origin);
       }
       
       // remove this line when you implement basic raytracing
