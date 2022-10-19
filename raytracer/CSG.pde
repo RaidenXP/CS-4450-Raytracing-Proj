@@ -91,13 +91,6 @@ class Intersection implements SceneObject
        if ((rHits.size() > 0) && (rHits.get(0).entry == false)){
            depth++;
        }
-       /*    
-       if (rHits.size() == 0) {
-           RayHit rh = new RayHit();
-           rh.t = Float.POSITIVE_INFINITY;
-           rh.entry = false;
-           rHits.add(rh);
-       }*/
        
        hits.addAll(rHits);
      }
@@ -136,13 +129,161 @@ class Difference implements SceneObject
     this.b = b;
     
     // remove this line when you implement difference
-    throw new NotImplementedException("CSG Operation: Difference not implemented yet");
+    //throw new NotImplementedException("CSG Operation: Difference not implemented yet");
   }
   
   ArrayList<RayHit> intersect(Ray r)
   {
+     ArrayList<RayHit> rHitsA = a.intersect(r);
+     ArrayList<RayHit> rHitsB = b.intersect(r);
      
-     return null;
+     int i_a = 0;
+     int i_b = 0;
+     
+     boolean is_a = false;
+     boolean is_b = false;
+     
+     boolean in_a = false;
+     boolean in_b = false;
+     
+     boolean a_first = false;
+     boolean prev_entry = false;
+     
+     RayHit current = new RayHit();
+     
+     rHitsA.sort(new HitCompare());
+     rHitsB.sort(new HitCompare());
+     
+     ArrayList<RayHit> result = new ArrayList<RayHit>();
+     
+     if(rHitsA.isEmpty()){
+       return result;
+     }
+     
+     if(rHitsB.isEmpty()){
+       result.addAll(rHitsA);
+       return result;
+     }
+     
+     while(i_a < rHitsA.size() || i_b < rHitsB.size()){
+       if(i_a == rHitsA.size()){
+         break; 
+       }
+       
+       if(i_b == rHitsB.size()){
+         //uncomment this part and comment bottom part to get another image
+         //for(int i = i_a; i < rHitsA.size(); ++i){
+         //  if(prev_entry && in_a && !in_b){
+         //    result.add(rHitsA.get(i));
+         //    in_a = false;
+         //    prev_entry = false;
+         //  }
+         //  else if(!prev_entry && (!in_a || in_b)){
+         //    result.add(rHitsA.get(i));
+         //    prev_entry = true;
+         //    in_a = true;
+         //  }
+         //}
+         
+         //uncomment this part and comment top for loop to get different image
+         result.addAll(rHitsA);
+         break; 
+       }
+       
+       if(rHitsA.get(i_a).t < rHitsB.get(i_b).t){
+          current.t = rHitsA.get(i_a).t;
+          current.location = rHitsA.get(i_a).location;
+          current.normal = rHitsA.get(i_a).normal;
+          current.entry = rHitsA.get(i_a).entry;
+          current.material = rHitsA.get(i_a).material;
+          
+          is_a = true;
+          is_b = false;
+          
+          if(i_a == 0 && i_b == 0){
+            a_first = true; 
+          }
+          
+          ++i_a;
+       } 
+       else {
+         current.t = rHitsB.get(i_b).t;
+         current.location = rHitsB.get(i_b).location;
+         current.normal = rHitsB.get(i_b).normal;
+         current.entry = rHitsB.get(i_b).entry;
+         current.material = rHitsB.get(i_b).material;
+         
+         is_a = false;
+         is_b = true;
+         
+         ++i_b;
+       }
+       
+       if(a_first){
+         if(is_a && current.entry && (!in_a || in_b)){
+            in_a = true;
+            if(in_a && !in_b){
+              result.add(current);
+              prev_entry = true;
+            }
+         }
+         else if(is_a && !current.entry && in_a && !in_b){
+           result.add(current);
+           in_a = false;
+           prev_entry = false;
+         }
+         else if(is_b && current.entry && in_a && !in_b){
+           current.normal = PVector.mult(current.normal, -1);
+           current.entry = false;
+           
+           prev_entry = false;
+           in_b = true;
+           
+           result.add(current);
+         }
+         else if(is_b && current.entry && (!in_a || in_b)){
+           in_b = true; 
+         }
+         else if(is_b && !current.entry){
+           in_b = false; 
+         }
+         else if(is_a && !current.entry){
+           in_a = false;
+         }
+       }
+       else if(!a_first){
+         if(is_b && current.entry && (!in_a || in_b)){
+           in_b = true; 
+         }
+         else if(is_a && current.entry && (!in_a || in_b)){
+           in_a = true;
+         }
+         else if(is_a && !current.entry && (in_a && !in_b)){
+           if(prev_entry){
+             result.add(current);  
+           }
+           in_a = false;
+         }
+         else if(is_b && !current.entry && (!in_a || in_b))
+         {
+           current.normal = PVector.mult(current.normal, -1);
+           current.entry = true;
+           
+           prev_entry = true;
+           in_b = false;
+           
+           result.add(current);
+         }
+       }
+       
+     }
+     
+       
+     //if(i_b == rHitsB.size()){
+     //  result.addAll(rHitsA);
+     //}
+     
+     return result;
   }
   
 }
