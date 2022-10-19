@@ -147,7 +147,6 @@ class Difference implements SceneObject
      boolean in_b = false;
      
      boolean a_first = false;
-     boolean prev_entry = false;
      
      RayHit current = new RayHit();
      
@@ -173,16 +172,7 @@ class Difference implements SceneObject
        if(i_b == rHitsB.size()){
          //uncomment this part and comment bottom part to get another image
          //for(int i = i_a; i < rHitsA.size(); ++i){
-         //  if(prev_entry && in_a && !in_b){
-         //    result.add(rHitsA.get(i));
-         //    in_a = false;
-         //    prev_entry = false;
-         //  }
-         //  else if(!prev_entry && (!in_a || in_b)){
-         //    result.add(rHitsA.get(i));
-         //    prev_entry = true;
-         //    in_a = true;
-         //  }
+         //  result.add(rHitsA.get(i));
          //}
          
          //uncomment this part and comment top for loop to get different image
@@ -204,6 +194,13 @@ class Difference implements SceneObject
             a_first = true; 
           }
           
+          if(!rHitsA.get(i_a).entry && i_a == 0){
+            in_a = true; 
+          }
+          if(!rHitsB.get(i_b).entry && i_b == 0){
+            in_b = true; 
+          }
+          
           ++i_a;
        } 
        else {
@@ -213,35 +210,40 @@ class Difference implements SceneObject
          current.entry = rHitsB.get(i_b).entry;
          current.material = rHitsB.get(i_b).material;
          
+         if(!rHitsA.get(i_a).entry && i_a == 0){
+            in_a = true; 
+          }
+          if(!rHitsB.get(i_b).entry && i_b == 0){
+            in_b = true; 
+          }
+         
          is_a = false;
          is_b = true;
          
          ++i_b;
        }
        
+       
        if(a_first){
-         if(is_a && current.entry && (!in_a || in_b)){
+         if(is_a && current.entry){
             in_a = true;
             if(in_a && !in_b){
               result.add(current);
-              prev_entry = true;
             }
          }
          else if(is_a && !current.entry && in_a && !in_b){
            result.add(current);
            in_a = false;
-           prev_entry = false;
          }
          else if(is_b && current.entry && in_a && !in_b){
            current.normal = PVector.mult(current.normal, -1);
            current.entry = false;
            
-           prev_entry = false;
            in_b = true;
            
            result.add(current);
          }
-         else if(is_b && current.entry && (!in_a || in_b)){
+         else if(is_b && current.entry){
            in_b = true; 
          }
          else if(is_b && !current.entry){
@@ -252,27 +254,29 @@ class Difference implements SceneObject
          }
        }
        else if(!a_first){
-         if(is_b && current.entry && (!in_a || in_b)){
+         if(is_b && current.entry){
            in_b = true; 
          }
-         else if(is_a && current.entry && (!in_a || in_b)){
+         else if(is_a && current.entry){
            in_a = true;
+           if(in_a && !in_b){
+             result.add(current);
+           }
          }
          else if(is_a && !current.entry && (in_a && !in_b)){
-           if(prev_entry){
-             result.add(current);  
-           }
+           result.add(current);  
            in_a = false;
          }
-         else if(is_b && !current.entry && (!in_a || in_b))
+         else if(is_b && !current.entry)
          {
-           current.normal = PVector.mult(current.normal, -1);
-           current.entry = true;
-           
-           prev_entry = true;
            in_b = false;
            
-           result.add(current);
+           if(in_a && !in_b){
+             current.normal = PVector.mult(current.normal, -1);
+             current.entry = true;
+           
+             result.add(current);
+           }
          }
        }
        
