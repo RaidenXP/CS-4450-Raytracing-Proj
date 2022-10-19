@@ -156,12 +156,20 @@ class Difference implements SceneObject
      ArrayList<RayHit> result = new ArrayList<RayHit>();
      
      if(rHitsA.isEmpty()){
-       return result;
+     return result;
      }
      
      if(rHitsB.isEmpty()){
        result.addAll(rHitsA);
        return result;
+     }
+     
+     if(!rHitsA.get(i_a).entry){
+       in_a = true; 
+     }
+    
+     if(!rHitsB.get(i_b).entry){
+       in_b = true; 
      }
      
      while(i_a < rHitsA.size() || i_b < rHitsB.size()){
@@ -194,13 +202,6 @@ class Difference implements SceneObject
             a_first = true; 
           }
           
-          if(!rHitsA.get(i_a).entry && i_a == 0){
-            in_a = true; 
-          }
-          if(!rHitsB.get(i_b).entry && i_b == 0){
-            in_b = true; 
-          }
-          
           ++i_a;
        } 
        else {
@@ -210,19 +211,11 @@ class Difference implements SceneObject
          current.entry = rHitsB.get(i_b).entry;
          current.material = rHitsB.get(i_b).material;
          
-         if(!rHitsA.get(i_a).entry && i_a == 0){
-            in_a = true; 
-          }
-          if(!rHitsB.get(i_b).entry && i_b == 0){
-            in_b = true; 
-          }
-         
          is_a = false;
          is_b = true;
          
          ++i_b;
        }
-       
        
        if(a_first){
          if(is_a && current.entry){
@@ -255,7 +248,13 @@ class Difference implements SceneObject
        }
        else if(!a_first){
          if(is_b && current.entry){
-           in_b = true; 
+           if(in_a && !in_b){
+             current.normal = PVector.mult(current.normal, -1);
+             current.entry = false;
+             result.add(current);
+           }
+           
+           in_b = true;
          }
          else if(is_a && current.entry){
            in_a = true;
@@ -266,6 +265,9 @@ class Difference implements SceneObject
          else if(is_a && !current.entry && (in_a && !in_b)){
            result.add(current);  
            in_a = false;
+         }
+         else if(is_a && !current.entry){
+           in_a = false; 
          }
          else if(is_b && !current.entry)
          {
@@ -281,11 +283,6 @@ class Difference implements SceneObject
        }
        
      }
-     
-       
-     //if(i_b == rHitsB.size()){
-     //  result.addAll(rHitsA);
-     //}
      
      return result;
   }
