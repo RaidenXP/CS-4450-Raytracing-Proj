@@ -222,159 +222,39 @@ class Difference implements SceneObject
              
          }
          else {
-             in_b = true;
+             if(!rhh.is_a && rhh.hit.entry){
+                 if (in_a && !in_b) {
+                     rhh.hit.normal = PVector.mult(rhh.hit.normal, -1);
+                     rhh.hit.entry = false;
+                     result.add(rhh.hit);
+                 }
+                 in_b = true;
+             }
+             else if(rhh.is_a && rhh.hit.entry){
+                 in_a = true;
+                 
+                 if(in_a && !in_b){
+                      result.add(rhh.hit);
+                 }
+             }
+             else if(rhh.is_a && !rhh.hit.entry){
+                 if(in_a && !in_b){
+                     result.add(rhh.hit);  
+                 }
+                 
+                 in_a = false;
+             }
+             else if(!rhh.is_a && !rhh.hit.entry){
+                 in_b = false;
+                 
+                 if (in_a && !in_b) {
+                     rhh.hit.normal = PVector.mult(rhh.hit.normal, -1);
+                     rhh.hit.entry = true;
+                     result.add(rhh.hit);
+                 }
+             }
          }
-             
-         
      }
-     
-     /*
-     int i_a = 0;
-     int i_b = 0;
-     
-     boolean is_a = false;
-     boolean is_b = false;
-     
-     boolean in_a = false;
-     boolean in_b = false;
-     
-     boolean a_first = false;
-     
-     RayHit current = new RayHit();
-     
-     rHitsA.sort(new HitCompare());
-     rHitsB.sort(new HitCompare());
-     
-     ArrayList<RayHit> result = new ArrayList<RayHit>();
-     
-     if(rHitsA.isEmpty()){
-     return result;
-     }
-     
-     if(rHitsB.isEmpty()){
-       result.addAll(rHitsA);
-       return result;
-     }
-     
-     if(!rHitsA.get(i_a).entry){
-       in_a = true; 
-     }
-    
-     if(!rHitsB.get(i_b).entry){
-       in_b = true; 
-     }
-     
-     while(i_a < rHitsA.size() || i_b < rHitsB.size()){
-       if(i_a == rHitsA.size()){
-         break; 
-       }
-       
-       if(i_b == rHitsB.size()){
-         //uncomment this part and comment bottom part to get another image
-         //for(int i = i_a; i < rHitsA.size(); ++i){
-         //  result.add(rHitsA.get(i));
-         //}
-         
-         //uncomment this part and comment top for loop to get different image
-         result.addAll(rHitsA);
-         break; 
-       }
-       
-       if(rHitsA.get(i_a).t < rHitsB.get(i_b).t){
-          current.t = rHitsA.get(i_a).t;
-          current.location = rHitsA.get(i_a).location;
-          current.normal = rHitsA.get(i_a).normal;
-          current.entry = rHitsA.get(i_a).entry;
-          current.material = rHitsA.get(i_a).material;
-          
-          is_a = true;
-          is_b = false;
-          
-          if(i_a == 0 && i_b == 0){
-            a_first = true; 
-          }
-          
-          ++i_a;
-       } 
-       else {
-         current.t = rHitsB.get(i_b).t;
-         current.location = rHitsB.get(i_b).location;
-         current.normal = rHitsB.get(i_b).normal;
-         current.entry = rHitsB.get(i_b).entry;
-         current.material = rHitsB.get(i_b).material;
-         
-         is_a = false;
-         is_b = true;
-         
-         ++i_b;
-       }
-       
-       if(a_first){
-         if(is_a && current.entry){
-            in_a = true;
-            if(in_a && !in_b){
-              result.add(current);
-            }
-         }
-         else if(is_a && !current.entry && in_a && !in_b){
-           result.add(current);
-           in_a = false;
-         }
-         else if(is_b && current.entry && in_a && !in_b){
-           current.normal = PVector.mult(current.normal, -1);
-           current.entry = false;
-           
-           in_b = true;
-           
-           result.add(current);
-         }
-         else if(is_b && current.entry){
-           in_b = true; 
-         }
-         else if(is_b && !current.entry){
-           in_b = false; 
-         }
-         else if(is_a && !current.entry){
-           in_a = false;
-         }
-       }
-       else if(!a_first){
-         if(is_b && current.entry){
-           if(in_a && !in_b){
-             current.normal = PVector.mult(current.normal, -1);
-             current.entry = false;
-             result.add(current);
-           }
-           
-           in_b = true;
-         }
-         else if(is_a && current.entry){
-           in_a = true;
-           if(in_a && !in_b){
-             result.add(current);
-           }
-         }
-         else if(is_a && !current.entry && (in_a && !in_b)){
-           result.add(current);  
-           in_a = false;
-         }
-         else if(is_a && !current.entry){
-           in_a = false; 
-         }
-         else if(is_b && !current.entry)
-         {
-           in_b = false;
-           
-           if(in_a && !in_b){
-             current.normal = PVector.mult(current.normal, -1);
-             current.entry = true;
-           
-             result.add(current);
-           }
-         }
-       }
-       
-     }*/
      
      return result;
   }
