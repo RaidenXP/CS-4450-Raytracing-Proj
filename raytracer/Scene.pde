@@ -13,6 +13,12 @@ interface SceneObject
    ArrayList<RayHit> intersect(Ray r);
 }
 
+class RayHitHolder
+{
+    RayHit hit;
+    boolean is_a;
+}
+
 class Scene
 {
    LightingModel lighting;

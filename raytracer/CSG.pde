@@ -12,6 +12,18 @@ class HitCompare implements Comparator<RayHit>
   }
 }
 
+class HolderCompare implements Comparator<RayHitHolder>
+{
+    int compare(RayHitHolder a, RayHitHolder b)
+    {
+        if (a.hit.t < b.hit.t) return -1;
+        if (a.hit.t > b.hit.t) return 1;
+        if (a.hit.entry) return -1;
+        if (b.hit.entry) return 1;
+        return 0;
+    }
+}
+
 class Union implements SceneObject
 {
   SceneObject[] children;
@@ -137,6 +149,31 @@ class Difference implements SceneObject
      ArrayList<RayHit> rHitsA = a.intersect(r);
      ArrayList<RayHit> rHitsB = b.intersect(r);
      
+     // Create a list of RayHitHolders and populate it with the intersections of A and B
+     ArrayList<RayHitHolder> hits = new ArrayList<RayHitHolder>();
+     for (RayHit rh : rHitsA) {
+         RayHitHolder rhh = new RayHitHolder();
+         rhh.hit = rh;        // Is this ok or are there some initialization issues?
+         rhh.is_a = true;
+         hits.add(rhh);
+     }
+     for (RayHit rh : rHitsB) {
+         RayHitHolder rhh = new RayHitHolder();
+         rhh.hit = rh;        // Is this ok or are there some initialization issues?
+         rhh.is_a = false;
+         hits.add(rhh);
+     }
+     
+     // Sort the RayHitHolders using the new comparator class
+     hits.sort(new HolderCompare()); // I hope this works...
+     
+     boolean in_a = false;
+     boolean in_b = false;
+     ArrayList<RayHit> result = new ArrayList<RayHit>();
+     
+     
+     
+     /*
      int i_a = 0;
      int i_b = 0;
      
@@ -282,7 +319,7 @@ class Difference implements SceneObject
          }
        }
        
-     }
+     }*/
      
      return result;
   }
