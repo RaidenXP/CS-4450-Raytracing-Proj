@@ -149,6 +149,21 @@ class Difference implements SceneObject
      ArrayList<RayHit> rHitsA = a.intersect(r);
      ArrayList<RayHit> rHitsB = b.intersect(r);
      
+     // Sort ray hits for A and B
+     rHitsA.sort(new HitCompare());
+     rHitsB.sort(new HitCompare());
+     
+     ArrayList<RayHit> result = new ArrayList<RayHit>();
+     
+     if(rHitsA.isEmpty()){
+         return result;
+     }
+     
+     if(rHitsB.isEmpty()){
+         result.addAll(rHitsA);
+         return result;
+     }
+     
      // Create a list of RayHitHolders and populate it with the intersections of A and B
      ArrayList<RayHitHolder> hits = new ArrayList<RayHitHolder>();
      for (RayHit rh : rHitsA) {
@@ -169,9 +184,49 @@ class Difference implements SceneObject
      
      boolean in_a = false;
      boolean in_b = false;
-     ArrayList<RayHit> result = new ArrayList<RayHit>();
      
+     if (!rHitsA.get(0).entry)
+         in_a = true;
+     if (!rHitsB.get(0).entry)
+         in_b = true;
      
+     for (RayHitHolder rhh : hits) {
+         if (hits.get(0).is_a){
+             if (rhh.is_a && rhh.hit.entry){
+                 in_a = true;
+                 if (in_a && !in_b)
+                     result.add(rhh.hit);
+             }
+             else if (!rhh.is_a && rhh.hit.entry){
+                 if (in_a && !in_b) {
+                     rhh.hit.normal = PVector.mult(rhh.hit.normal, -1);
+                     rhh.hit.entry = false;
+                     result.add(rhh.hit);
+                 }
+                 in_b = true;
+             }
+             else if (rhh.is_a && !rhh.hit.entry) {
+                 if (in_a && !in_b)
+                     result.add(rhh.hit);
+                 in_a = false;
+             }
+             else if (!rhh.is_a && !rhh.hit.entry) {
+                 in_b = false;
+                 
+                 if (in_a && !in_b) {
+                     rhh.hit.normal = PVector.mult(rhh.hit.normal, -1);
+                     rhh.hit.entry = true;
+                     result.add(rhh.hit);
+                 }
+             }
+             
+         }
+         else {
+             in_b = true;
+         }
+             
+         
+     }
      
      /*
      int i_a = 0;
