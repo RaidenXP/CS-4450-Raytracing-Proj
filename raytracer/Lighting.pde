@@ -64,7 +64,7 @@ class PhongLightingModel extends LightingModel
       color hitcolor = hit.material.getColor(hit.u, hit.v); // color of the hit location
       
       // Calculate the ambient color of the shape
-      color i_a = scaleColor(hitcolor, ambient); // Do I use ambient for this color scaling
+      color i_a = scaleColor(hitcolor, ambient); // Do I use ambient for this color scaling?
       color A = multColor(i_a, hit.material.properties.ka);
       
       // Calculate the diffuse color of the shape for each light and sum them all
@@ -81,17 +81,19 @@ class PhongLightingModel extends LightingModel
       color S = color(0, 0, 0);
       for (Light l : this.lights) {
         color i_s = l.spec(hitcolor);
-        PVector V = PVector.sub(viewer, hit.location); // This should be the direction to the camera, but
-                                                       // I'm not sure if this is right.
+        PVector V = PVector.sub(viewer, hit.location).normalize(); // This should be the direction to the camera, but
+                                                                   // I'm not sure if this is right.
         PVector L = PVector.sub(l.position, hit.location).normalize();
-        PVector R = PVector.sub(PVector.mult(PVector.mult(hit.normal, 2), PVector.dot(hit.normal, L)), L).normalize();
+        PVector R = PVector.sub(PVector.mult(hit.normal, 2 * PVector.dot(hit.normal, L)), L).normalize();
         float shiny = PVector.dot(R, V);
         color temp = multColor(i_s, hit.material.properties.ks * pow(shiny, hit.material.properties.alpha));
         S = addColors(S, temp);
       }
       
-      return addColors(addColors(A, D), S);
       // return hit.material.getColor(hit.u, hit.v);
+      return addColors(addColors(A, D), S);
+      // return addColors(A, D);
+      // return A;
     }
   
 }
