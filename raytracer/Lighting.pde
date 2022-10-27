@@ -73,10 +73,11 @@ class PhongLightingModel extends LightingModel
         PVector tolight = PVector.sub(l.position, hit.location).normalize();
         
         if (withshadow) {
-          Ray pixelRay = new Ray(hit.location, tolight);
+          PVector offsetHit = PVector.add(viewer, PVector.mult(PVector.sub(hit.location, viewer).normalize(), hit.t - EPS));
+          Ray pixelRay = new Ray(offsetHit, tolight);
           ArrayList<RayHit> hits = sc.root.intersect(pixelRay);
         
-          if ((hits.size() < 1)) { // This is ignoring the first hit the bad way instead of using EPS. Causes surface acne.
+          if ((hits.size() == 0)) {
             color i_d = l.shine(hitcolor);
             float intensity = PVector.dot(tolight, hit.normal);
             color temp = multColor(i_d, hit.material.properties.kd * intensity);
@@ -97,10 +98,11 @@ class PhongLightingModel extends LightingModel
         PVector L = PVector.sub(l.position, hit.location).normalize();
         
         if (withshadow) {
-          Ray pixelRay = new Ray(hit.location, L);
+          PVector offsetHit = PVector.add(viewer, PVector.mult(PVector.sub(hit.location, viewer).normalize(), hit.t - EPS));
+          Ray pixelRay = new Ray(offsetHit, L);
           ArrayList<RayHit> hits = sc.root.intersect(pixelRay);
           
-          if ((hits.size() < 1)) {
+          if ((hits.size() == 0)) {
             color i_s = l.spec(hitcolor);
             PVector V = PVector.sub(viewer, hit.location).normalize(); // This should be the direction to the camera, but
                                                                        // I'm not sure if this is right.
