@@ -16,7 +16,7 @@ class Sphere implements SceneObject
     
     ArrayList<RayHit> intersect(Ray r)
     {
-        ArrayList<RayHit> result = new ArrayList<RayHit>(); //<>// //<>// //<>//
+        ArrayList<RayHit> result = new ArrayList<RayHit>(); //<>// //<>// //<>// //<>//
         // TODO: Step 2: implement ray-sphere intersections
         
         // t_p = (c - o) * direction
@@ -37,10 +37,10 @@ class Sphere implements SceneObject
           float temp = t1;
           t1 = t2;
           t2 = temp;
-        } //<>//
+        } //<>// //<>//
         
         if ((t1 > 0 && t2 > 0) && distance < this.radius){
-          RayHit entry = new RayHit(); //<>// //<>// //<>//
+          RayHit entry = new RayHit(); //<>// //<>// //<>// //<>//
           RayHit exit = new RayHit();
           
           PVector pEntry = PVector.add(r.origin, PVector.mult(r.direction, t1));
@@ -206,6 +206,7 @@ abstract class Quadrics
     abstract float calc_a(Ray r);
     abstract float calc_b(Ray r);
     abstract float calc_c(Ray r);
+    abstract PVector calc_Normal(PVector p);
     ArrayList<RayHit> myFunction(float a, float b, float c, Ray r) // Temporary function name. 
     {
         ArrayList<RayHit> result = new ArrayList<RayHit>();
@@ -236,7 +237,8 @@ abstract class Quadrics
           if((pEntry.z <= this.height && pEntry.z >= 0) || this.height == -1){
             entry.t = t1;
             entry.location = pEntry;
-            entry.normal = new PVector(pEntry.x, pEntry.y, 0).normalize();
+            // entry.normal = new PVector(pEntry.x, pEntry.y, 0).normalize();
+            entry.normal = calc_Normal(pEntry);
             entry.entry = true;
             entry.material = this.material;
 
@@ -283,7 +285,8 @@ abstract class Quadrics
           if ((pExit.z <= this.height && pExit.z >= 0) || this.height == -1){
             exit.t = t2;
             exit.location = pExit;
-            exit.normal = new PVector(pExit.x, pExit.y, 0).normalize();
+            // exit.normal = new PVector(pExit.x, pExit.y, 0).normalize();
+            exit.normal = calc_Normal(pExit);
             exit.entry = false;
             exit.material = this.material;
 
@@ -357,6 +360,11 @@ class Cylinder extends Quadrics implements SceneObject
         return sq(r.origin.x) + sq(r.origin.y) - sq(this.radius);
     }
     
+    PVector calc_Normal(PVector p) 
+    {
+        return new PVector(p.x, p.y, 0).normalize();
+    }
+    
     ArrayList<RayHit> intersect(Ray r)
     {   
         float a = calc_a(r);
@@ -392,6 +400,12 @@ class Cone extends Quadrics implements SceneObject
     float calc_c(Ray r)
     {
         return sq(r.origin.x) + sq(r.origin.y) - sq(r.origin.z);
+    }
+    
+    PVector calc_Normal(PVector p) 
+    {
+        // This should be (2x, 2y, -2z)
+        return new PVector(2 * p.x, 2 * p.y, -2 * p.z).normalize();
     }
     
     ArrayList<RayHit> intersect(Ray r)
