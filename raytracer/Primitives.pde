@@ -514,23 +514,49 @@ class HyperboloidOneSheet extends Quadrics implements SceneObject
     }
 }
 
-class HyperboloidTwoSheet implements SceneObject
+class HyperboloidTwoSheet extends Quadrics implements SceneObject
 {
     Material material;
     float scale;
     
     HyperboloidTwoSheet(Material mat, float scale)
     {
-        this.material = mat;
-        this.scale = scale;
+        super(-1, mat, scale);
+        // this.material = mat;
+        // this.scale = scale;
         
         // remove this line when you implement two-sheet hyperboloids
-        throw new NotImplementedException("Hyperboloids of two sheets not implemented yet");
+        // throw new NotImplementedException("Hyperboloids of two sheets not implemented yet");
     }
     
+    float calc_a(Ray r)
+    {
+        return sq(r.direction.x) + sq(r.direction.y) - sq(r.direction.z);
+    }
+    
+    float calc_b(Ray r)
+    {
+        return (2.0 * r.direction.x * r.origin.x) + (2.0 * r.direction.y * r.origin.y) - (2.0 * r.direction.z * r.origin.z);
+    }
+    
+    float calc_c(Ray r)
+    {
+        return sq(r.origin.x) + sq(r.origin.y) - sq(r.origin.z) + 1;
+    }
+    
+    PVector calc_Normal(PVector p) 
+    {
+        // This should be (2x, 2y, -2z)
+        return new PVector(2 * p.x, 2 * p.y, -2 * p.z).normalize();
+    }
+  
     ArrayList<RayHit> intersect(Ray r)
     {
-        ArrayList<RayHit> result = new ArrayList<RayHit>();
-        return result;
+        //ArrayList<RayHit> result = new ArrayList<RayHit>();
+        float a = calc_a(r);
+        float b = calc_b(r);
+        float c = calc_c(r);
+        
+        return myFunction(a, b, c, r);
     }
 }
