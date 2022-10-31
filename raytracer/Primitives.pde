@@ -200,39 +200,36 @@ class Triangle implements SceneObject
     }
 }
 
-class Cylinder implements SceneObject
+abstract class Quadrics
 {
     float radius;
     float height;
     Material material;
     float scale;
     
-    Cylinder(float radius, Material mat, float scale)
+    Quadrics(float radius, Material mat, float scale)
     {
-       this.radius = radius;
-       this.height = -1;
-       this.material = mat;
-       this.scale = scale;
-       
-       // remove this line when you implement cylinders
-       //throw new NotImplementedException("Cylinders not implemented yet");
+        this.material = mat;
+        this.scale = scale;
+        this.height = -1;
+        this.radius = radius;
     }
     
-    Cylinder(float radius, float height, Material mat, float scale)
+    Quadrics(float radius, float height, Material mat, float scale)
     {
-       this.radius = radius;
-       this.height = height;
-       this.material = mat;
-       this.scale = scale;
+        this.material = mat;
+        this.scale = scale;
+        this.height = height;
+        this.radius = radius;
     }
     
-    ArrayList<RayHit> intersect(Ray r)
+    abstract float calc_a(Ray r);
+    abstract float calc_b(Ray r);
+    abstract float calc_c(Ray r);
+    abstract PVector calc_Normal(PVector p);
+    ArrayList<RayHit> myFunction(float a, float b, float c, Ray r) // Temporary function name. 
     {
         ArrayList<RayHit> result = new ArrayList<RayHit>();
-        
-        float a = sq(r.direction.x) + sq(r.direction.y);
-        float b = (2.0 * r.direction.x * r.origin.x) + (2.0 * r.direction.y * r.origin.y);
-        float c = sq(r.origin.x) + sq(r.origin.y) - sq(this.radius);
         
         float t1 = 0.0;
         float t2 = 0.0;
@@ -260,7 +257,8 @@ class Cylinder implements SceneObject
           if((pEntry.z <= this.height && pEntry.z >= 0) || this.height == -1){
             entry.t = t1;
             entry.location = pEntry;
-            entry.normal = new PVector(pEntry.x, pEntry.y, 0).normalize();
+            // entry.normal = new PVector(pEntry.x, pEntry.y, 0).normalize();
+            entry.normal = calc_Normal(pEntry);
             entry.entry = true;
             entry.material = this.material;
 
@@ -307,7 +305,8 @@ class Cylinder implements SceneObject
           if ((pExit.z <= this.height && pExit.z >= 0) || this.height == -1){
             exit.t = t2;
             exit.location = pExit;
-            exit.normal = new PVector(pExit.x, pExit.y, 0).normalize();
+            // exit.normal = new PVector(pExit.x, pExit.y, 0).normalize();
+            exit.normal = calc_Normal(pExit);
             exit.entry = false;
             exit.material = this.material;
 
@@ -344,100 +343,240 @@ class Cylinder implements SceneObject
                     exit.entry = false;
                     exit.material = this.material;
                     
-                    result.add(entry);
+                    result.add(entry);    // Should this be result.add(exit);
                  } 
                }
             }
           }        
-
-        }
-        
+        }       
         return result;
     }
 }
 
-class Cone implements SceneObject
+class Cylinder extends Quadrics implements SceneObject
 {
-    Material material;
-    float scale;
+    Cylinder(float radius, Material mat, float scale)
+    {
+      super(radius, mat, scale);
+    }
     
+    Cylinder(float radius, float height, Material mat, float scale)
+    {
+        super(radius, height, mat, scale);
+    }
+    
+    float calc_a(Ray r)
+    {
+        return sq(r.direction.x) + sq(r.direction.y);
+    }
+    
+    float calc_b(Ray r)
+    {
+        return (2.0 * r.direction.x * r.origin.x) + (2.0 * r.direction.y * r.origin.y);
+    }
+    
+    float calc_c(Ray r)
+    {
+        return sq(r.origin.x) + sq(r.origin.y) - sq(this.radius);
+    }
+    
+    PVector calc_Normal(PVector p) 
+    {
+        return new PVector(p.x, p.y, 0).normalize();
+    }
+    
+    ArrayList<RayHit> intersect(Ray r)
+    {   
+        float a = calc_a(r);
+        float b = calc_b(r);
+        float c = calc_c(r);
+        
+        return myFunction(a, b, c, r);
+    }
+}
+
+class Cone extends Quadrics implements SceneObject
+{
     Cone(Material mat, float scale)
     {
-        this.material = mat;
-        this.scale = scale;
+        super(-1, mat, scale);
+        //this.material = mat;
+        //this.scale = scale;
         
         // remove this line when you implement cones
-       throw new NotImplementedException("Cones not implemented yet");
+        //throw new NotImplementedException("Cones not implemented yet");
+    }
+    
+    float calc_a(Ray r)
+    {
+        return sq(r.direction.x) + sq(r.direction.y) - sq(r.direction.z);
+    }
+    
+    float calc_b(Ray r)
+    {
+        return (2.0 * r.direction.x * r.origin.x) + (2.0 * r.direction.y * r.origin.y) - (2.0 * r.direction.z * r.origin.z);
+    }
+    
+    float calc_c(Ray r)
+    {
+        return sq(r.origin.x) + sq(r.origin.y) - sq(r.origin.z);
+    }
+    
+    PVector calc_Normal(PVector p) 
+    {
+        // This should be (2x, 2y, -2z)
+        return new PVector(2 * p.x, 2 * p.y, -2 * p.z).normalize();
     }
     
     ArrayList<RayHit> intersect(Ray r)
     {
-        ArrayList<RayHit> result = new ArrayList<RayHit>();
-        return result;
+        //ArrayList<RayHit> result = new ArrayList<RayHit>();
+        float a = calc_a(r);
+        float b = calc_b(r);
+        float c = calc_c(r);
+        
+        return myFunction(a, b, c, r);
     }
-   
 }
 
-class Paraboloid implements SceneObject
+class Paraboloid extends Quadrics implements SceneObject
 {
     Material material;
     float scale;
     
     Paraboloid(Material mat, float scale)
     {
-        this.material = mat;
-        this.scale = scale;
+        super(-1, mat, scale);
+        // this.material = mat;
+        // this.scale = scale;
         
         // remove this line when you implement paraboloids
-       throw new NotImplementedException("Paraboloid not implemented yet");
+        // throw new NotImplementedException("Paraboloid not implemented yet");
+    }
+    
+    float calc_a(Ray r)
+    {
+        return sq(r.direction.x) + sq(r.direction.y);
+    }
+    
+    float calc_b(Ray r)
+    {
+        return (2.0 * r.direction.x * r.origin.x) + (2.0 * r.direction.y * r.origin.y) - (r.direction.z);
+    }
+    
+    float calc_c(Ray r)
+    {
+        return sq(r.origin.x) + sq(r.origin.y) - (r.origin.z);
+    }
+    
+    PVector calc_Normal(PVector p) 
+    {
+        // This should be (2x, 2y, -1)
+        return new PVector(2 * p.x, 2 * p.y, -1).normalize();
     }
     
     ArrayList<RayHit> intersect(Ray r)
     {
-        ArrayList<RayHit> result = new ArrayList<RayHit>();
-        return result;
+        //ArrayList<RayHit> result = new ArrayList<RayHit>();
+        float a = calc_a(r);
+        float b = calc_b(r);
+        float c = calc_c(r);
+        
+        return myFunction(a, b, c, r);
     }
    
 }
 
-class HyperboloidOneSheet implements SceneObject
+class HyperboloidOneSheet extends Quadrics implements SceneObject
 {
     Material material;
     float scale;
     
     HyperboloidOneSheet(Material mat, float scale)
     {
-        this.material = mat;
-        this.scale = scale;
+        super(-1, mat, scale);
+        // this.material = mat;
+        // this.scale = scale;
         
         // remove this line when you implement one-sheet hyperboloids
-        throw new NotImplementedException("Hyperboloids of one sheet not implemented yet");
+        // throw new NotImplementedException("Hyperboloids of one sheet not implemented yet");
+    }
+    
+    float calc_a(Ray r)
+    {
+        return sq(r.direction.x) + sq(r.direction.y) - sq(r.direction.z);
+    }
+    
+    float calc_b(Ray r)
+    {
+        return (2.0 * r.direction.x * r.origin.x) + (2.0 * r.direction.y * r.origin.y) - (2.0 * r.direction.z * r.origin.z);
+    }
+    
+    float calc_c(Ray r)
+    {
+        return sq(r.origin.x) + sq(r.origin.y) - sq(r.origin.z) - 1;
+    }
+    
+    PVector calc_Normal(PVector p) 
+    {
+        // This should be (2x, 2y, -2z)
+        return new PVector(2 * p.x, 2 * p.y, -2 * p.z).normalize();
     }
   
     ArrayList<RayHit> intersect(Ray r)
     {
-        ArrayList<RayHit> result = new ArrayList<RayHit>();
-        return result;
+        //ArrayList<RayHit> result = new ArrayList<RayHit>();
+        float a = calc_a(r);
+        float b = calc_b(r);
+        float c = calc_c(r);
+        
+        return myFunction(a, b, c, r);
     }
 }
 
-class HyperboloidTwoSheet implements SceneObject
+class HyperboloidTwoSheet extends Quadrics implements SceneObject
 {
     Material material;
     float scale;
     
     HyperboloidTwoSheet(Material mat, float scale)
     {
-        this.material = mat;
-        this.scale = scale;
+        super(-1, mat, scale);
+        // this.material = mat;
+        // this.scale = scale;
         
         // remove this line when you implement two-sheet hyperboloids
-        throw new NotImplementedException("Hyperboloids of two sheets not implemented yet");
+        // throw new NotImplementedException("Hyperboloids of two sheets not implemented yet");
     }
     
+    float calc_a(Ray r)
+    {
+        return sq(r.direction.x) + sq(r.direction.y) - sq(r.direction.z);
+    }
+    
+    float calc_b(Ray r)
+    {
+        return (2.0 * r.direction.x * r.origin.x) + (2.0 * r.direction.y * r.origin.y) - (2.0 * r.direction.z * r.origin.z);
+    }
+    
+    float calc_c(Ray r)
+    {
+        return sq(r.origin.x) + sq(r.origin.y) - sq(r.origin.z) + 1;
+    }
+    
+    PVector calc_Normal(PVector p) 
+    {
+        // This should be (2x, 2y, -2z)
+        return new PVector(2 * p.x, 2 * p.y, -2 * p.z).normalize();
+    }
+  
     ArrayList<RayHit> intersect(Ray r)
     {
-        ArrayList<RayHit> result = new ArrayList<RayHit>();
-        return result;
+        //ArrayList<RayHit> result = new ArrayList<RayHit>();
+        float a = calc_a(r);
+        float b = calc_b(r);
+        float c = calc_c(r);
+        
+        return myFunction(a, b, c, r);
     }
 }
