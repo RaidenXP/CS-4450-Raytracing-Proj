@@ -419,24 +419,50 @@ class Cone extends Quadrics implements SceneObject
     }
 }
 
-class Paraboloid implements SceneObject
+class Paraboloid extends Quadrics implements SceneObject
 {
     Material material;
     float scale;
     
     Paraboloid(Material mat, float scale)
     {
-        this.material = mat;
-        this.scale = scale;
+        super(-1, mat, scale);
+        // this.material = mat;
+        // this.scale = scale;
         
         // remove this line when you implement paraboloids
-       throw new NotImplementedException("Paraboloid not implemented yet");
+        // throw new NotImplementedException("Paraboloid not implemented yet");
+    }
+    
+    float calc_a(Ray r)
+    {
+        return sq(r.direction.x) + sq(r.direction.y);
+    }
+    
+    float calc_b(Ray r)
+    {
+        return (2.0 * r.direction.x * r.origin.x) + (2.0 * r.direction.y * r.origin.y) - (r.direction.z);
+    }
+    
+    float calc_c(Ray r)
+    {
+        return sq(r.origin.x) + sq(r.origin.y) - (r.origin.z);
+    }
+    
+    PVector calc_Normal(PVector p) 
+    {
+        // This should be (2x, 2y, -1)
+        return new PVector(2 * p.x, 2 * p.y, -1).normalize();
     }
     
     ArrayList<RayHit> intersect(Ray r)
     {
-        ArrayList<RayHit> result = new ArrayList<RayHit>();
-        return result;
+        //ArrayList<RayHit> result = new ArrayList<RayHit>();
+        float a = calc_a(r);
+        float b = calc_b(r);
+        float c = calc_c(r);
+        
+        return myFunction(a, b, c, r);
     }
    
 }
