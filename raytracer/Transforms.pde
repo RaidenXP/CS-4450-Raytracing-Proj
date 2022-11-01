@@ -20,18 +20,33 @@ class MoveRotation implements SceneObject
   }
   
   // Calculate PVector that has been rotated about the z-axis
-  PVector rotateZAxis(PVector p, float alpha)
+  PVector rotateZAxis(PVector p, boolean inverse)
   {
+      float alpha;
+      if (inverse)
+          alpha = -atan(p.y / p.x);
+      else
+          alpha = atan(p.y / p.x);
       return new PVector((cos(alpha) * p.x)-(sin(alpha) * p.y), (sin(alpha) * p.x)+(cos(alpha) * p.y), p.z);
   }
   // Calculate PVector that has been rotated about the y-axis
-  PVector rotateYAxis(PVector p, float alpha)
+  PVector rotateYAxis(PVector p, boolean inverse)
   {
+      float alpha;
+      if (inverse)
+          alpha = -atan(p.z / p.x);
+      else
+          alpha = atan(p.z / p.x);
       return new PVector((cos(alpha) * p.x)+(sin(alpha) * p.z), p.y, (-sin(alpha) * p.x)+(cos(alpha) * p.z));
   }
   // Calculate PVector that has been rotated about the x-axis
-  PVector rotateXAxis(PVector p, float alpha)
+  PVector rotateXAxis(PVector p, boolean inverse)
   {
+      float alpha;
+      if (inverse)
+          alpha = -atan(p.z / p.y);
+      else
+          alpha = atan(p.z / p.y);
       return new PVector(p.x, (cos(alpha) * p.y)-(sin(alpha) * p.z), (sin(alpha) * p.y)+(cos(alpha) * p.z));
   }
   
