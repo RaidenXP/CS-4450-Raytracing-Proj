@@ -182,10 +182,10 @@ class RayTracer
              }
              
              // get the light of the next object
-             if (j < hits.size()){
+             if (j < nextHits.size()){
                // mix the colors as we go
                color next = scene.lighting.getColor(nextHits.get(j), scene, nextRay.origin);
-               return lerpColor(initial, shootRay(nextHits, currentRay, next),  nextHits.get(j).material.properties.reflectiveness);
+               return lerpColor(initial, shootRay(nextHits, currentRay, next), nextHits.get(j).material.properties.reflectiveness);
              }
          }
          else{
@@ -211,7 +211,7 @@ class RayTracer
              }
              
              // this is the main difference. we dont need to mix colors we just continue with the color that was given by the reflection ray
-             if (j < hits.size()){
+             if (j < nextHits.size()){
                color next = scene.lighting.getColor(nextHits.get(j), scene, nextRay.origin);
                return shootRay(nextHits, currentRay, next);
              }
