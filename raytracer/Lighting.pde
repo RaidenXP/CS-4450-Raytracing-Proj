@@ -73,7 +73,7 @@ class PhongLightingModel extends LightingModel
         PVector tolight = PVector.sub(l.position, hit.location).normalize();
         
         if (withshadow) {
-          PVector offsetHit = PVector.add(viewer, PVector.mult(PVector.sub(hit.location, viewer).normalize(), hit.t - EPS));
+          PVector offsetHit = PVector.add(hit.location, PVector.mult(tolight, EPS));
           Ray pixelRay = new Ray(offsetHit, tolight);
           ArrayList<RayHit> hits = sc.root.intersect(pixelRay);
         
@@ -98,7 +98,8 @@ class PhongLightingModel extends LightingModel
         PVector L = PVector.sub(l.position, hit.location).normalize();
         
         if (withshadow) {
-          PVector offsetHit = PVector.add(viewer, PVector.mult(PVector.sub(hit.location, viewer).normalize(), hit.t - EPS));
+          // PVector offsetHit = PVector.add(viewer, PVector.mult(PVector.sub(hit.location, viewer).normalize(), hit.t - EPS));
+          PVector offsetHit = PVector.add(hit.location, PVector.mult(L, EPS));
           Ray pixelRay = new Ray(offsetHit, L);
           ArrayList<RayHit> hits = sc.root.intersect(pixelRay);
           

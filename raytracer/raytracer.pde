@@ -160,7 +160,8 @@ class RayTracer
       if(i < hits.size() && hits.get(i).material.properties.reflectiveness > 0 && hits.get(i).material.properties.reflectiveness < 1){
          // hopefully changed origin to the point of impact with a little offset
          // is the math right here?
-         origin = PVector.add(origin, PVector.mult(direction, hits.get(i).t - EPS));
+         // origin = PVector.add(origin, PVector.mult(direction, hits.get(i).t - EPS));
+         origin = PVector.add(hits.get(i).location, PVector.mult(direction, EPS));
          
          // is this right for the original ray direction?
          PVector v = PVector.mult(direction, -1);
@@ -230,7 +231,7 @@ class RayTracer
         return initial;
       }
       
-      return initial;
+      return scene.background;
     }
     
     color getColor(int x, int y)
