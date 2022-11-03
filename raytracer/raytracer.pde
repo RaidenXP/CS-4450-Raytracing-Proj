@@ -1,5 +1,5 @@
-String input =  "data/tests/milestone3/test11.json";
-String output = "data/tests/milestone3/test11.png";
+String input =  "data/tests/milestone3/test12.json";
+String output = "data/tests/milestone3/test12.png";
 int repeat = 0;
 
 int iteration = 0;
@@ -158,12 +158,12 @@ class RayTracer
         }
         
         // shoots one last redirected ray if possible otherwise returns surface color or background
-        // uses same process below;
+        // uses same process below after this if-else block;
         if(counter > scene.reflections){
           if(i < hits.size() && hits.get(i).material.properties.reflectiveness > 0){
             PVector nextOrigin = PVector.add(hits.get(i).location, PVector.mult(currentRay.direction, EPS));
             PVector v = PVector.mult(currentRay.direction, -1);
-            PVector nextDirection = PVector.sub(PVector.mult(hits.get(i).normal, 2 * PVector.dot(hits.get(i).normal, v)), v);
+            PVector nextDirection = PVector.sub(PVector.mult(hits.get(i).normal, 2 * PVector.dot(hits.get(i).normal, v)), v).normalize();
             
             Ray redirectedRay = new Ray(nextOrigin, nextDirection);
             
@@ -200,7 +200,7 @@ class RayTracer
           // v is the opposite direction of the current direction lol
           PVector v = PVector.mult(currentRay.direction, -1);
           // our new direction is found through 2 * N (N dot V) - V
-          PVector nextDirection = PVector.sub(PVector.mult(hits.get(i).normal, 2 * PVector.dot(hits.get(i).normal, v)), v);
+          PVector nextDirection = PVector.sub(PVector.mult(hits.get(i).normal, 2 * PVector.dot(hits.get(i).normal, v)), v).normalize();
           
           Ray redirectedRay = new Ray(nextOrigin, nextDirection);
           // keep shooting our redirected ray
