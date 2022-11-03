@@ -1,5 +1,6 @@
 String input =  "data/tests/milestone3/test12.json";
 String output = "data/tests/milestone3/test12.png";
+
 int repeat = 0;
 
 int iteration = 0;
