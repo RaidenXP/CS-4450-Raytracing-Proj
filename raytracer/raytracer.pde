@@ -157,8 +157,37 @@ class RayTracer
           surfaceColor = scene.lighting.getColor(hits.get(i), scene, currentRay.origin);
         }
         
+        // shoots one last redirected ray if possible otherwise returns surface color or background
+        // uses same process below;
         if(counter > scene.reflections){
-          return surfaceColor; 
+          if(i < hits.size() && hits.get(i).material.properties.reflectiveness > 0){
+            PVector nextOrigin = PVector.add(hits.get(i).location, PVector.mult(currentRay.direction, EPS));
+            PVector v = PVector.mult(currentRay.direction, -1);
+            PVector nextDirection = PVector.sub(PVector.mult(hits.get(i).normal, 2 * PVector.dot(hits.get(i).normal, v)), v);
+            
+            Ray redirectedRay = new Ray(nextOrigin, nextDirection);
+            
+            ArrayList<RayHit> nextHits = scene.root.intersect(redirectedRay);
+            
+            if(nextHits.size() > 0){
+              int j = 0;
+              while ((j < nextHits.size()) && (nextHits.get(j).entry == false)) {
+                  j++;
+              }
+              
+              color otherColor = color(0,0,0);
+              
+              if(j < hits.size()){
+                otherColor = scene.lighting.getColor(nextHits.get(j), scene, redirectedRay.origin);
+                return lerpColor(surfaceColor, otherColor, hits.get(i).material.properties.reflectiveness);
+              }
+            }
+          }
+          else if(i < hits.size()){
+            return surfaceColor; 
+          }
+          
+          return scene.background;
         }
         else{
           ++counter; 
