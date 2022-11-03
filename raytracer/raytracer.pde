@@ -1,5 +1,5 @@
-String input =  "data/tests/milestone3/test10.json";
-String output = "data/tests/milestone3/test10.png";
+String input =  "data/tests/milestone3/test11.json";
+String output = "data/tests/milestone3/test11.png";
 int repeat = 0;
 
 int iteration = 0;
@@ -135,102 +135,58 @@ class RayTracer
        this.scene = scene;
     }
     
-    color shootRay(ArrayList<RayHit> hits, Ray currentRay, color initial){
-      // function should be getting the hits of the current ray, the current ray, and the current color
+    color shootRay(Ray currentRay){
+      // only takes the current ray that is shot
       
-      // loop has the same function to remove exits
-      int i = 0; //<>//
-      while ((i < hits.size()) && (hits.get(i).entry == false)) {
-        i++;
-      }
+      // shoots the ray and looks for the intersections
+      ArrayList<RayHit> hits = scene.root.intersect(currentRay); //<>//
       
-      // counter to keep track of how many reflections we've been through
-      // not sure if the return is right here
-      if(counter > scene.reflections){
-        return initial; 
-      }
-      else{
-        ++counter; 
-      }
-      
-      // origin and direction stored to get ready for change
-      PVector origin = currentRay.origin;
-      PVector direction = currentRay.direction;
-      
-      if(i < hits.size() && hits.get(i).material.properties.reflectiveness > 0 && hits.get(i).material.properties.reflectiveness < 1){
-         // hopefully changed origin to the point of impact with a little offset
-         // is the math right here?
-         // origin = PVector.add(origin, PVector.mult(direction, hits.get(i).t - EPS));
-         origin = PVector.add(hits.get(i).location, PVector.mult(direction, EPS));
-         
-         // is this right for the original ray direction?
-         PVector v = PVector.mult(direction, -1);
-         
-         // should be the direction reflected among the normal vector
-         // R = 2*N*(N dot V) - V
-         direction = PVector.sub(PVector.mult(PVector.mult(hits.get(i).normal, PVector.dot(hits.get(i).normal, v)), 2), v);
-         
-         Ray nextRay = new Ray(origin, direction);
-         
-         // getting new hits from the reflective ray
-         ArrayList <RayHit> nextHits = new ArrayList<RayHit>();
-         nextHits = scene.root.intersect(nextRay);
-         
-         if(nextHits.size() > 0){
-             // same with the other loop just ignore exits
-             int j = 0;
-             while ((j < nextHits.size()) && (nextHits.get(j).entry == false)) {
-               j++;
-             }
-             
-             // get the light of the next object
-             if (j < nextHits.size()){
-               // mix the colors as we go
-               color next = scene.lighting.getColor(nextHits.get(j), scene, nextRay.origin);
-               return lerpColor(initial, shootRay(nextHits, nextRay, next), hits.get(i).material.properties.reflectiveness);
-             }
-         }
-         else{
-           // if there are no hits just return the intial/previous color
-           return initial;  
-         }
-      }
-      else if(i < hits.size() && hits.get(i).material.properties.reflectiveness == 1){
-         // same process as above to create a new reflection ray
-         origin = PVector.add(origin, PVector.mult(direction, hits.get(i).t - EPS));
-         PVector v = PVector.mult(direction, -1);
-         direction = PVector.sub(PVector.mult(PVector.mult(hits.get(i).normal, PVector.dot(hits.get(i).normal, v)), 2), v);
-         
-         Ray nextRay = new Ray(origin, direction);
-         
-         ArrayList <RayHit> nextHits = new ArrayList<RayHit>();
-         nextHits = scene.root.intersect(nextRay);
-         
-         if(nextHits.size() > 0){
-            int j = 0;
-             while ((j < nextHits.size()) && (nextHits.get(j).entry == false)) {
-               j++;
-             }
-             
-             // this is the main difference. we dont need to mix colors we just continue with the color that was given by the reflection ray
-             if (j < nextHits.size()){
-               color next = scene.lighting.getColor(nextHits.get(j), scene, nextRay.origin);
-               return shootRay(nextHits, nextRay, next);
-             }
-         }
-         else{
-           // if there are no hits then we just return the initial/previous color
-           return initial;   
-         }
-      }
-      else if(i < hits.size() && hits.get(i).material.properties.reflectiveness == 0){
-        // if the object is not reflective we just return the previous/initial color
-        // ??? if we hit a solid item should we return the color of solid item or color of previous item
-        //color next = scene.lighting.getColor(hits.get(i), scene, currentRay.origin);
-        //return next;
-        return initial;
+      // if the ray hits something we go get its color and check for reflections
+      if(hits.size() > 0){
+        // helps ignore the exit rays
+        int i = 0;
+        while ((i < hits.size()) && (hits.get(i).entry == false)) {
+            i++;
+        }
+        
+        //initialize the surface color
+        color surfaceColor = color(0,0,0);
+        
+        // if our i is still in range and is an entry we get the color of the current object
+        if(i < hits.size()){
+          surfaceColor = scene.lighting.getColor(hits.get(i), scene, currentRay.origin);
+        }
+        
+        if(counter > scene.reflections){
+          return surfaceColor; 
+        }
+        else{
+          ++counter; 
+        }
+        
+        // if there is some reflectiveness then we create a redirected ray
+        if(i < hits.size() && hits.get(i).material.properties.reflectiveness > 0){
+          // origin of the redirected ray starts on the hit location with some offset
+          PVector nextOrigin = PVector.add(hits.get(i).location, PVector.mult(currentRay.direction, EPS));
+          // v is the opposite direction of the current direction lol
+          PVector v = PVector.mult(currentRay.direction, -1);
+          // our new direction is found through 2 * N (N dot V) - V
+          PVector nextDirection = PVector.sub(PVector.mult(hits.get(i).normal, 2 * PVector.dot(hits.get(i).normal, v)), v);
+          
+          Ray redirectedRay = new Ray(nextOrigin, nextDirection);
+          // keep shooting our redirected ray
+          color otherColor = shootRay(redirectedRay);
+          // mix colors and return
+          return lerpColor(surfaceColor, otherColor, hits.get(i).material.properties.reflectiveness);
+        }
+        else if(i < hits.size()){
+          return surfaceColor; 
+        }
+        
       }
       
+      // if we hit nothing it should be the background then
+      // no real way to actually get the color of the previous/current color if there are no hits
       return scene.background;
     }
     
@@ -259,16 +215,9 @@ class RayTracer
       
       if (scene.reflections > 0)
       {
-        if(hits.size() > 0){
-          int i = 0;
-          while ((i < hits.size()) && (hits.get(i).entry == false)) {
-            i++;
-          }
-          
-          color initial = scene.lighting.getColor(hits.get(i), scene, pixelRay.origin);
-          colorCombo = shootRay(hits, pixelRay, initial);
+          //color initial = scene.lighting.getColor(hits.get(i), scene, pixelRay.origin);
+          colorCombo = shootRay(pixelRay);
           return colorCombo;
-        }
           
       }
       else if(hits.size() > 0){

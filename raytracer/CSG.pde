@@ -32,7 +32,7 @@ class Union implements SceneObject
     this.children = children;
     // remove this line when you implement true unions
     // println("WARNING: Using 'fake' union");
-    println("WARNING: \"True\" Union not fully tested");
+    //println("WARNING: \"True\" Union not fully tested");
   }
 
   ArrayList<RayHit> intersect(Ray r)
