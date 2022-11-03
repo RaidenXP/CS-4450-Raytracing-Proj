@@ -86,12 +86,52 @@ class Scaling implements SceneObject
     this.scaling = scaling;
     
     // remove this line when you implement Scaling
-    throw new NotImplementedException("Scaling not implemented yet");
+    // throw new NotImplementedException("Scaling not implemented yet");
   }
   
   
   ArrayList<RayHit> intersect(Ray r)
   {
-     return child.intersect(r);
+     Ray r1 = new Ray(r.origin, r.direction);
+     
+     // 1. Apply the inverse scale to the origin and direction of the ray
+     if (scaling.x > 0) {
+         r1.origin.x = r1.origin.x / scaling.x;
+         r1.direction.x = r1.direction.x / scaling.x;
+     }
+     if (scaling.y > 0) {
+         r1.origin.y = r1.origin.y / scaling.y;
+         r1.direction.y = r1.direction.y / scaling.y;
+     }
+     if (scaling.z > 0) {
+         r1.origin.z = r1.origin.z / scaling.z;
+         r1.direction.z = r1.direction.z / scaling.z;
+     }
+     r1.direction.normalize();
+     
+     // 2. Call intersect on the child
+     ArrayList<RayHit> hits = child.intersect(r1);
+     
+     // 3. Apply scaling to the location and normal for every hit
+     for (RayHit rh : hits) 
+     {
+         if (scaling.x > 0) {
+             rh.location.x = rh.location.x * scaling.x;
+             rh.normal.x = rh.normal.x * scaling.x;
+         }
+         if (scaling.y > 0) {
+             rh.location.y = rh.location.y * scaling.y;
+             rh.normal.y = rh.normal.y * scaling.y;
+         }
+         if (scaling.z > 0) {
+             rh.location.z = rh.location.z * scaling.z;
+             rh.normal.z = rh.normal.z * scaling.z;
+         }
+         rh.normal.normalize();
+     }
+     
+     // 4. Return the transformed RayHits
+     return hits;
+     // return child.intersect(r);
   }
 }
