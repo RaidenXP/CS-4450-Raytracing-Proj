@@ -1,5 +1,5 @@
-String input =  "data/tests/milestone3/test12.json";
-String output = "data/tests/milestone3/test12.png";
+String input =  "data/tests/milestone3/test11.json";
+String output = "data/tests/milestone3/test11.png";
 
 int repeat = 0;
 
@@ -198,18 +198,23 @@ class RayTracer
         if(i < hits.size() && hits.get(i).material.properties.reflectiveness > 0){
           // origin of the redirected ray starts on the hit location with some offset
           PVector nextOrigin = PVector.add(hits.get(i).location, PVector.mult(currentRay.direction, EPS));
+          
           // v is the opposite direction of the current direction lol
           PVector v = PVector.mult(currentRay.direction, -1);
+          
           // our new direction is found through 2 * N (N dot V) - V
           PVector nextDirection = PVector.sub(PVector.mult(hits.get(i).normal, 2 * PVector.dot(hits.get(i).normal, v)), v).normalize();
           
           Ray redirectedRay = new Ray(nextOrigin, nextDirection);
+          
           // keep shooting our redirected ray
           color otherColor = shootRay(redirectedRay);
+          
           // mix colors and return
           return lerpColor(surfaceColor, otherColor, hits.get(i).material.properties.reflectiveness);
         }
         else if(i < hits.size()){
+          // case where reflectiveness is == 0
           return surfaceColor; 
         }
         
@@ -237,18 +242,14 @@ class RayTracer
       //Direction is prob the direction of the ray to the pixel
       PVector direction = new PVector(u * w, w/2, v * h).normalize();
       
-      color colorCombo;
-      
       Ray pixelRay = new Ray(origin, direction);
       
       ArrayList<RayHit> hits = scene.root.intersect(pixelRay);
       
       if (scene.reflections > 0)
       {
-          //color initial = scene.lighting.getColor(hits.get(i), scene, pixelRay.origin);
-          colorCombo = shootRay(pixelRay);
-          return colorCombo;
-          
+          color colorCombo = shootRay(pixelRay);
+          return colorCombo;   
       }
       else if(hits.size() > 0){
         // The while loop is used for not displaying objects that we are inside of
