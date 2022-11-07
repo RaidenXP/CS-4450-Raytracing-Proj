@@ -37,10 +37,10 @@ class Sphere implements SceneObject
           float temp = t1;
           t1 = t2;
           t2 = temp;
-        } //<>// //<>//
+        } //<>//
         
         if ((t1 > 0 && t2 > 0) && distance < this.radius){
-          RayHit entry = new RayHit(); //<>// //<>// //<>// //<>//
+          RayHit entry = new RayHit(); //<>//
           RayHit exit = new RayHit();
           
           PVector pEntry = PVector.add(r.origin, PVector.mult(r.direction, t1));
@@ -60,6 +60,30 @@ class Sphere implements SceneObject
           exit.material = this.material;
           
           result.add(entry);
+          result.add(exit);
+        }
+        else if(t1 > 0 && distance < this.radius){
+          RayHit entry = new RayHit();
+          PVector pEntry = PVector.add(r.origin, PVector.mult(r.direction, t1));
+          
+          entry.t = t1;
+          entry.location = pEntry;
+          entry.normal = PVector.sub(pEntry, this.center).normalize();
+          entry.entry = true;
+          entry.material = this.material;
+          
+          result.add(entry);
+        }
+        else if(t2 > 0 && distance < this.radius){
+          RayHit exit = new RayHit();
+          
+          PVector pExit = PVector.add(r.origin, PVector.mult(r.direction, t2));
+          
+          exit.t = t2;
+          exit.location = pExit;
+          exit.normal = PVector.sub(pExit, this.center).normalize();
+          exit.entry = false;
+          exit.material = this.material;
           result.add(exit);
         }
         

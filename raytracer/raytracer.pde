@@ -1,5 +1,5 @@
-String input =  "data/tests/milestone3/test11.json";
-String output = "data/tests/milestone3/test11.png";
+String input =  "data/tests/milestone3/test12.json";
+String output = "data/tests/milestone3/test12.png";
 
 int repeat = 0;
 
@@ -178,7 +178,7 @@ class RayTracer
               
               color otherColor = color(0,0,0);
               
-              if(j < hits.size()){
+              if(j < nextHits.size()){
                 otherColor = scene.lighting.getColor(nextHits.get(j), scene, redirectedRay.origin);
                 return lerpColor(surfaceColor, otherColor, hits.get(i).material.properties.reflectiveness);
               }
