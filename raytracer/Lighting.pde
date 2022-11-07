@@ -67,8 +67,9 @@ class PhongLightingModel extends LightingModel
       color i_a = scaleColor(hitcolor, ambient); // Do I use ambient for this color scaling?
       color A = multColor(i_a, hit.material.properties.ka);
       
-      // Calculate the diffuse color of the shape for each light and sum them all
+      // Calculate the diffuse and specular color of the shape for each light and sum them all
       color D = color(0, 0, 0);
+      color S = color(0, 0, 0);
       for (Light l : this.lights) {
         PVector tolight = PVector.sub(l.position, hit.location).normalize();
         
@@ -82,6 +83,14 @@ class PhongLightingModel extends LightingModel
             float intensity = PVector.dot(tolight, hit.normal);
             color temp = multColor(i_d, hit.material.properties.kd * intensity);
             D = addColors(D, temp);
+            
+            color i_s = l.spec(hitcolor);
+            PVector V = PVector.sub(viewer, hit.location).normalize(); // This should be the direction to the camera, but
+                                                                       // I'm not sure if this is right.
+            PVector R = PVector.sub(PVector.mult(hit.normal, 2 * PVector.dot(hit.normal, tolight)), tolight).normalize();
+            float shiny = PVector.dot(R, V);
+            temp = multColor(i_s, hit.material.properties.ks * pow(shiny, hit.material.properties.alpha));
+            S = addColors(S, temp);
           }
         }
         else {
@@ -89,40 +98,48 @@ class PhongLightingModel extends LightingModel
           float intensity = PVector.dot(tolight, hit.normal);
           color temp = multColor(i_d, hit.material.properties.kd * intensity);
           D = addColors(D, temp);
+          
+          color i_s = l.spec(hitcolor);
+          PVector V = PVector.sub(viewer, hit.location).normalize(); // This should be the direction to the camera, but
+                                                                     // I'm not sure if this is right.
+          PVector R = PVector.sub(PVector.mult(hit.normal, 2 * PVector.dot(hit.normal, tolight)), tolight).normalize();
+          float shiny = PVector.dot(R, V);
+          temp = multColor(i_s, hit.material.properties.ks * pow(shiny, hit.material.properties.alpha));
+          S = addColors(S, temp);
         }
       }
       
       // Calculate the specular color of the shape for each light and sum them all
-      color S = color(0, 0, 0);
-      for (Light l : this.lights) {
-        PVector L = PVector.sub(l.position, hit.location).normalize();
+      //color S = color(0, 0, 0);
+      //for (Light l : this.lights) {
+      //  PVector L = PVector.sub(l.position, hit.location).normalize();
         
-        if (withshadow) {
-          // PVector offsetHit = PVector.add(viewer, PVector.mult(PVector.sub(hit.location, viewer).normalize(), hit.t - EPS));
-          PVector offsetHit = PVector.add(hit.location, PVector.mult(L, EPS));
-          Ray pixelRay = new Ray(offsetHit, L);
-          ArrayList<RayHit> hits = sc.root.intersect(pixelRay);
+      //  if (withshadow) {
+      //    // PVector offsetHit = PVector.add(viewer, PVector.mult(PVector.sub(hit.location, viewer).normalize(), hit.t - EPS));
+      //    PVector offsetHit = PVector.add(hit.location, PVector.mult(L, EPS));
+      //    Ray pixelRay = new Ray(offsetHit, L);
+      //    ArrayList<RayHit> hits = sc.root.intersect(pixelRay);
           
-          if ((hits.size() == 0)) {
-            color i_s = l.spec(hitcolor);
-            PVector V = PVector.sub(viewer, hit.location).normalize(); // This should be the direction to the camera, but
-                                                                       // I'm not sure if this is right.
-            PVector R = PVector.sub(PVector.mult(hit.normal, 2 * PVector.dot(hit.normal, L)), L).normalize();
-            float shiny = PVector.dot(R, V);
-            color temp = multColor(i_s, hit.material.properties.ks * pow(shiny, hit.material.properties.alpha));
-            S = addColors(S, temp);
-          }
-        }
-        else {
-          color i_s = l.spec(hitcolor);
-          PVector V = PVector.sub(viewer, hit.location).normalize(); // This should be the direction to the camera, but
-                                                                     // I'm not sure if this is right.
-          PVector R = PVector.sub(PVector.mult(hit.normal, 2 * PVector.dot(hit.normal, L)), L).normalize();
-          float shiny = PVector.dot(R, V);
-          color temp = multColor(i_s, hit.material.properties.ks * pow(shiny, hit.material.properties.alpha));
-          S = addColors(S, temp);
-        }
-      }
+      //    if ((hits.size() == 0)) {
+      //      color i_s = l.spec(hitcolor);
+      //      PVector V = PVector.sub(viewer, hit.location).normalize(); // This should be the direction to the camera, but
+      //                                                                 // I'm not sure if this is right.
+      //      PVector R = PVector.sub(PVector.mult(hit.normal, 2 * PVector.dot(hit.normal, L)), L).normalize();
+      //      float shiny = PVector.dot(R, V);
+      //      color temp = multColor(i_s, hit.material.properties.ks * pow(shiny, hit.material.properties.alpha));
+      //      S = addColors(S, temp);
+      //    }
+      //  }
+      //  else {
+      //    color i_s = l.spec(hitcolor);
+      //    PVector V = PVector.sub(viewer, hit.location).normalize(); // This should be the direction to the camera, but
+      //                                                               // I'm not sure if this is right.
+      //    PVector R = PVector.sub(PVector.mult(hit.normal, 2 * PVector.dot(hit.normal, L)), L).normalize();
+      //    float shiny = PVector.dot(R, V);
+      //    color temp = multColor(i_s, hit.material.properties.ks * pow(shiny, hit.material.properties.alpha));
+      //    S = addColors(S, temp);
+      //  }
+      //}
       
       // return hit.material.getColor(hit.u, hit.v);
       return addColors(addColors(A, D), S);
