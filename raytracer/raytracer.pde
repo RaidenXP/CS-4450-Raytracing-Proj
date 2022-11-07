@@ -1,5 +1,5 @@
-String input =  "data/tests/milestone3/test12.json";
-String output = "data/tests/milestone3/test12.png";
+String input =  "data/tests/milestone3/test11.json";
+String output = "data/tests/milestone3/test11.png";
 
 int repeat = 0;
 
@@ -146,9 +146,9 @@ class RayTracer
       if(hits.size() > 0){
         // helps ignore the exit rays
         int i = 0;
-        while ((i < hits.size()) && (hits.get(i).entry == false)) {
+        /*while ((i < hits.size()) && (hits.get(i).entry == false)) {
             i++;
-        }
+        }*/
         
         //initialize the surface color
         color surfaceColor = color(0,0,0);
@@ -172,9 +172,9 @@ class RayTracer
             
             if(nextHits.size() > 0){
               int j = 0;
-              while ((j < nextHits.size()) && (nextHits.get(j).entry == false)) {
+              /*while ((j < nextHits.size()) && (nextHits.get(j).entry == false)) {
                   j++;
-              }
+              }*/
               
               color otherColor = color(0,0,0);
               
@@ -197,7 +197,7 @@ class RayTracer
         // if there is some reflectiveness then we create a redirected ray
         if(i < hits.size() && hits.get(i).material.properties.reflectiveness > 0){
           // origin of the redirected ray starts on the hit location with some offset
-          PVector nextOrigin = PVector.add(hits.get(i).location, PVector.mult(currentRay.direction, EPS));
+          PVector nextOrigin = hits.get(i).location; //PVector.add(hits.get(i).location, PVector.mult(currentRay.direction, EPS));
           
           // v is the opposite direction of the current direction lol
           PVector v = PVector.mult(currentRay.direction, -1);
@@ -205,7 +205,7 @@ class RayTracer
           // our new direction is found through 2 * N (N dot V) - V
           PVector nextDirection = PVector.sub(PVector.mult(hits.get(i).normal, 2 * PVector.dot(hits.get(i).normal, v)), v).normalize();
           
-          Ray redirectedRay = new Ray(nextOrigin, nextDirection);
+          Ray redirectedRay = new Ray(PVector.add(nextOrigin, PVector.mult(nextDirection, EPS)), nextDirection);
           
           // keep shooting our redirected ray
           color otherColor = shootRay(redirectedRay);
