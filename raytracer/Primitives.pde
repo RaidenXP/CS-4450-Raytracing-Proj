@@ -16,7 +16,7 @@ class Sphere implements SceneObject
     
     ArrayList<RayHit> intersect(Ray r)
     {
-        ArrayList<RayHit> result = new ArrayList<RayHit>(); //<>// //<>// //<>// //<>//
+        ArrayList<RayHit> result = new ArrayList<RayHit>(); //<>// //<>// //<>// //<>// //<>//
         // TODO: Step 2: implement ray-sphere intersections
         
         // t_p = (c - o) * direction
@@ -37,10 +37,10 @@ class Sphere implements SceneObject
         //  float temp = t1;
         //  t1 = t2;
         //  t2 = temp;
-        //} //<>//
+        //} //<>// //<>//
         
         //if ((t1 > 0 && t2 > 0) && distance < this.radius){
-        //  RayHit entry = new RayHit(); //<>//
+        //  RayHit entry = new RayHit(); //<>// //<>//
         //  RayHit exit = new RayHit();
           
         //  PVector pEntry = PVector.add(r.origin, PVector.mult(r.direction, t1));
@@ -150,7 +150,7 @@ class Plane implements SceneObject
             
             // Do we need a separate else if statement for when t = 0?
         }
-        if ((PVector.dot(r.direction, this.normal) <= 0) && (test > 0)){
+        if ((PVector.dot(r.direction, this.normal) > 0) && (test < 0)){
             RayHit rh = new RayHit();
             rh.t = Float.POSITIVE_INFINITY;
             rh.location = this.center; //PVector.add(r.origin, PVector.mult(r.direction, Float.POSITIVE_INFINITY));

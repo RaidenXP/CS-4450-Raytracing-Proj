@@ -92,7 +92,7 @@ class Scaling implements SceneObject
   
   ArrayList<RayHit> intersect(Ray r)
   {
-     Ray r1 = new Ray(r.origin, r.direction);
+     Ray r1 = new Ray(r.origin.copy(), r.direction.copy());
      
      // 1. Apply the inverse scale to the origin and direction of the ray
      if (scaling.x > 0) {
