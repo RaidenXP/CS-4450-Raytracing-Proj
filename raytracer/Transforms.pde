@@ -43,7 +43,7 @@ class MoveRotation implements SceneObject
   ArrayList<RayHit> intersect(Ray r)
   {
      // 1. Create a new ray by applying the inverse transformation to the ray
-     Ray r1 = new Ray(r.origin, r.direction);
+     Ray r1 = new Ray(r.origin.copy(), r.direction.copy());
      // r1.origin.add(PVector.mult(movement, -1)); // Inverse translate origin          // This might need to be PVector.add(r1.origin, PVector.mult(movement, -1));
      r1.origin = PVector.add(r1.origin, PVector.mult(movement, -1));
      r1.origin = rotateYAxis(r1.origin, true);  // Rotate origin around y-axis
