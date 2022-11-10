@@ -53,7 +53,7 @@ float sgn(float x)
 }
 
 // a "small" floating point value; useful for offsets and tolerances
-float EPS = 0.01;
+float EPS = 0.1;
 
 // Exception raised by constructors of currently unsupported operations
 public class NotImplementedException extends RuntimeException 
