@@ -1,9 +1,9 @@
-String input =  "data/tests/milestone3/test23.json";
-String output = "data/tests/milestone3/test23.png";
+String input =  "data/tests/milestone3/test24.json";
+String output = "data/tests/milestone3/test24.png";
 
 int repeat = 0;
 
-int iteration = 0;
+int iteration = 1;
 
 // If there is a procedural material in the scene,
 // loop will automatically be turned on if this variable is set
@@ -254,7 +254,7 @@ class RayTracer
             //in the case of an exit hit not sure how to know what the next refraction Index will be
             
             // h1/h2 but reversed...?
-            float coeff = hits.get(0).material.properties.refractionIndex/1;
+            float coeff = 1/hits.get(0).material.properties.refractionIndex;
             
             //negated norm
             PVector newNorm = PVector.mult(hits.get(0).normal, -1);

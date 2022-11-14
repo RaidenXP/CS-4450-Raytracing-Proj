@@ -78,7 +78,7 @@ class PhongLightingModel extends LightingModel
           Ray pixelRay = new Ray(offsetHit, tolight);
           ArrayList<RayHit> hits = sc.root.intersect(pixelRay);
         
-          if ((hits.size() == 0) || (hits.get(0).t > PVector.sub(l.position, hit.location).mag())) {
+          if ((hits.size() == 0) || (hits.get(0).t > PVector.sub(l.position, hit.location).mag()) || hits.get(0).material.properties.transparency > 0) {
             color i_d = l.shine(hitcolor);
             float intensity = PVector.dot(tolight, hit.normal);
             color temp = multColor(i_d, hit.material.properties.kd * intensity);
