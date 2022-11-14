@@ -209,19 +209,14 @@ class RayTracer
           // as of right now we are assuming that we start from the air/environment
           // then head into a transparent item with refraction
           
-          println("in");
-          
           // if our ray hit is an entry rayhit then we start with a h1 of 1
           // else we start with an h1 of the item
           if(hits.get(0).entry){
-            
-            println("in here too");
-            
             // h1/h2
             float coeff = 1/hits.get(0).material.properties.refractionIndex;
             
             // is this the ray vector?
-            PVector i = PVector.sub(hits.get(0).location, currentRay.origin);
+            PVector i = currentRay.direction;
             
             // cos(theta1) = -i dot n
             float cos = PVector.dot(PVector.mult(i, -1.0), hits.get(0).normal);
@@ -231,16 +226,17 @@ class RayTracer
             
             float coeff2 = 0.0;
             
-            if(1.0 - sin2 > 0){
+            if(1.0 - sin2 >= 0){
               // used to multiply with the normal vector
               coeff2 = (coeff * cos) - sqrt(1.0 - sin2); 
             }
             else{
+              // maybe return background instead???!
               return surfaceColor; 
             }
             
             //refracted ray t = the formula in the project description
-            PVector t = PVector.add(PVector.mult(i, coeff), PVector.mult(hits.get(0).normal, coeff2));
+            PVector t = PVector.add(PVector.mult(i, coeff), PVector.mult(hits.get(0).normal, coeff2)).normalize();
             
             // what is t? is that the direction??? will the origin be somewhat inside the volume?
             // should we subtract instead of add to put it inside the volume?
@@ -255,9 +251,7 @@ class RayTracer
             return lerpColor(surfaceColor, otherColor, hits.get(0).material.properties.transparency);
           }
           else{
-            //never goes in here
-            //talk about it later
-            println("what about here?");
+            //in the case of an exit hit not sure how to know what the next refraction Index will be
             
             // h1/h2 but reversed...?
             float coeff = hits.get(0).material.properties.refractionIndex/1;
@@ -266,7 +260,7 @@ class RayTracer
             PVector newNorm = PVector.mult(hits.get(0).normal, -1);
             
             // is this the ray vector?
-            PVector i = PVector.sub(hits.get(0).location, currentRay.origin);
+            PVector i = currentRay.direction;
             
             // cos(theta1) = -i dot n
             float cos = PVector.dot(PVector.mult(i, -1.0), newNorm);
@@ -285,7 +279,7 @@ class RayTracer
             }
             
             //refracted ray t = the formula in the project description
-            PVector t = PVector.add(PVector.mult(i, coeff), PVector.mult(newNorm, coeff2));
+            PVector t = PVector.add(PVector.mult(i, coeff), PVector.mult(newNorm, coeff2)).normalize();
             
             // what is t? is that the direction??? will the origin be somewhat inside the volume?
             // should we subtract instead of add to put it inside the volume?
