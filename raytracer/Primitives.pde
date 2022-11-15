@@ -16,7 +16,7 @@ class Sphere implements SceneObject
     
     ArrayList<RayHit> intersect(Ray r)
     {
-        ArrayList<RayHit> result = new ArrayList<RayHit>(); //<>// //<>// //<>// //<>// //<>//
+        ArrayList<RayHit> result = new ArrayList<RayHit>(); //<>//
         // TODO: Step 2: implement ray-sphere intersections
         
         // t_p = (c - o) * direction
@@ -31,37 +31,7 @@ class Sphere implements SceneObject
         //calc t-values
         //t = t_p +/- sqrt(sq(radius) - sq(distance))
         float t1 = projection - sqrt(sq(this.radius) - sq(distance));
-        float t2 = projection + sqrt(sq(this.radius) - sq(distance));
-        
-        //if(t2 < t1){
-        //  float temp = t1;
-        //  t1 = t2;
-        //  t2 = temp;
-        //} //<>// //<>//
-        
-        //if ((t1 > 0 && t2 > 0) && distance < this.radius){
-        //  RayHit entry = new RayHit(); //<>// //<>//
-        //  RayHit exit = new RayHit();
-          
-        //  PVector pEntry = PVector.add(r.origin, PVector.mult(r.direction, t1));
-          
-        //  PVector pExit = PVector.add(r.origin, PVector.mult(r.direction, t2));
-          
-        //  entry.t = t1;
-        //  entry.location = pEntry;
-        //  entry.normal = PVector.sub(pEntry, this.center).normalize();
-        //  entry.entry = true;
-        //  entry.material = this.material;
-          
-        //  exit.t = t2;
-        //  exit.location = pExit;
-        //  exit.normal = PVector.sub(pExit, this.center).normalize();
-        //  exit.entry = false;
-        //  exit.material = this.material;
-          
-        //  result.add(entry);
-        //  result.add(exit);
-        //}
+        float t2 = projection + sqrt(sq(this.radius) - sq(distance)); //<>// //<>//
         
         if((t1 > 0) && distance < this.radius){
           RayHit entry = new RayHit();

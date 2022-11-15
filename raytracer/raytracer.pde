@@ -1,7 +1,7 @@
-String input =  "data/tests/submission3/test%d.json";
-String output = "data/tests/submission3/test%d.png";
+String input =  "data/tests/milestone3/test27.json";
+String output = "data/tests/milestone3/test27.png";
 
-int repeat = 16;
+int repeat = 0;
 
 int iteration = 1;
 
@@ -145,65 +145,55 @@ class RayTracer
       // if the ray hits something we go get its color and check for reflections
       if(hits.size() > 0){
         // helps ignore the exit rays
-        int i = 0;
-        /*while ((i < hits.size()) && (hits.get(i).entry == false)) {
-            i++;
-        }*/
+        //int i = 0;
         
         //initialize the surface color
         color surfaceColor = color(0,0,0);
         
         // if our i is still in range and is an entry we get the color of the current object
-        if(i < hits.size()){
-          surfaceColor = scene.lighting.getColor(hits.get(i), scene, currentRay.origin);
-        }
         
-        // shoots one last redirected ray if possible otherwise returns surface color or background
-        // uses same process below after this if-else block;
-        if(counter > scene.reflections){
-          if(i < hits.size() && hits.get(i).material.properties.reflectiveness > 0){
-            PVector nextOrigin = PVector.add(hits.get(i).location, PVector.mult(currentRay.direction, EPS));
-            PVector v = PVector.mult(currentRay.direction, -1);
-            PVector nextDirection = PVector.sub(PVector.mult(hits.get(i).normal, 2 * PVector.dot(hits.get(i).normal, v)), v).normalize();
-            
-            Ray redirectedRay = new Ray(nextOrigin, nextDirection);
-            
-            ArrayList<RayHit> nextHits = scene.root.intersect(redirectedRay);
-            
-            if(nextHits.size() > 0){
-              int j = 0;
-              /*while ((j < nextHits.size()) && (nextHits.get(j).entry == false)) {
-                  j++;
-              }*/
-              
-              color otherColor = color(0,0,0);
-              
-              if(j < nextHits.size()){
-                otherColor = scene.lighting.getColor(nextHits.get(j), scene, redirectedRay.origin);
-                return lerpColor(surfaceColor, otherColor, hits.get(i).material.properties.reflectiveness);
-              }
-            }
-          }
-          else if(i < hits.size()){
-            return surfaceColor; 
-          }
-          
-          return scene.background;
-        }
-        else{
-          ++counter; 
-        }
+        surfaceColor = scene.lighting.getColor(hits.get(0), scene, currentRay.origin);
         
         // if there is some reflectiveness then we create a redirected ray
-        if(i < hits.size() && hits.get(i).material.properties.reflectiveness > 0){
+        if(hits.get(0).material.properties.reflectiveness > 0){
+          // shoots one last redirected ray if possible otherwise returns surface color or background
+          // uses same process below after this if-else block;
+          if(counter > scene.reflections){
+            PVector nextOrigin = hits.get(0).location;
+            PVector v = PVector.mult(currentRay.direction, -1);
+            PVector nextDirection = PVector.sub(PVector.mult(hits.get(0).normal, 2 * PVector.dot(hits.get(0).normal, v)), v).normalize();
+          
+            Ray redirectedRay = new Ray(nextOrigin, nextDirection);
+          
+            ArrayList<RayHit> nextHits = scene.root.intersect(redirectedRay);
+          
+            if(nextHits.size() > 0){
+              //int j = 0;
+            
+              color otherColor = color(0,0,0);
+              
+              otherColor = scene.lighting.getColor(nextHits.get(0), scene, redirectedRay.origin);
+              return lerpColor(surfaceColor, otherColor, hits.get(0).material.properties.reflectiveness);
+            }
+            else{
+              return surfaceColor; 
+            }
+            
+            //unreachable code when uncommented???
+            //return scene.background;
+          }
+          else{
+            ++counter; 
+          }
+          
           // origin of the redirected ray starts on the hit location with some offset
-          PVector nextOrigin = hits.get(i).location; //PVector.add(hits.get(i).location, PVector.mult(currentRay.direction, EPS));
+          PVector nextOrigin = hits.get(0).location; //PVector.add(hits.get(i).location, PVector.mult(currentRay.direction, EPS));
           
           // v is the opposite direction of the current direction lol
           PVector v = PVector.mult(currentRay.direction, -1);
           
           // our new direction is found through 2 * N (N dot V) - V
-          PVector nextDirection = PVector.sub(PVector.mult(hits.get(i).normal, 2 * PVector.dot(hits.get(i).normal, v)), v).normalize();
+          PVector nextDirection = PVector.sub(PVector.mult(hits.get(0).normal, 2 * PVector.dot(hits.get(0).normal, v)), v).normalize();
           
           Ray redirectedRay = new Ray(PVector.add(nextOrigin, PVector.mult(nextDirection, EPS)), nextDirection);
           
@@ -211,13 +201,104 @@ class RayTracer
           color otherColor = shootRay(redirectedRay);
           
           // mix colors and return
-          return lerpColor(surfaceColor, otherColor, hits.get(i).material.properties.reflectiveness);
+          return lerpColor(surfaceColor, otherColor, hits.get(0).material.properties.reflectiveness);
         }
-        else if(i < hits.size()){
+        // check for transparency if it is not reflective
+        else if(hits.get(0).material.properties.transparency > 0){
+          // there are still some things that need to be figured out (like how can we tell our current/next refraction index?)
+          // as of right now we are assuming that we start from the air/environment
+          // then head into a transparent item with refraction
+          
+          // if our ray hit is an entry rayhit then we start with a h1 of 1
+          // else we start with an h1 of the item
+          if(hits.get(0).entry){
+            // h1/h2
+            float coeff = 1/hits.get(0).material.properties.refractionIndex;
+            
+            // is this the ray vector?
+            PVector i = currentRay.direction;
+            
+            // cos(theta1) = -i dot n
+            float cos = PVector.dot(PVector.mult(i, -1.0), hits.get(0).normal);
+            
+            // (sin(theta2))^2 = (coeff)^2 * (1 - (cos(theta1))^2)
+            float sin2 = sq(coeff) * ( 1.0 - sq(cos));
+            
+            float coeff2 = 0.0;
+            
+            if(1.0 - sin2 >= 0){
+              // used to multiply with the normal vector
+              coeff2 = (coeff * cos) - sqrt(1.0 - sin2); 
+            }
+            else{
+              // maybe return background instead???!
+              return surfaceColor; 
+            }
+            
+            //refracted ray t = the formula in the project description
+            PVector t = PVector.add(PVector.mult(i, coeff), PVector.mult(hits.get(0).normal, coeff2)).normalize();
+            
+            // what is t? is that the direction??? will the origin be somewhat inside the volume?
+            // should we subtract instead of add to put it inside the volume?
+            // cause adding makes it start slighty away from the location right?
+            PVector nextOrigin = hits.get(0).location;
+            Ray redirectedRay = new Ray(PVector.add(nextOrigin, PVector.mult(t, EPS)), t);
+            
+            // keep shooting till reach the end
+            color otherColor = shootRay(redirectedRay);
+            
+            // mix colors
+            return lerpColor(surfaceColor, otherColor, hits.get(0).material.properties.transparency);
+          }
+          else{
+            //in the case of an exit hit not sure how to know what the next refraction Index will be
+            
+            // h1/h2 but reversed...?
+            float coeff = 1/hits.get(0).material.properties.refractionIndex;
+            
+            //negated norm
+            PVector newNorm = PVector.mult(hits.get(0).normal, -1);
+            
+            // is this the ray vector?
+            PVector i = currentRay.direction;
+            
+            // cos(theta1) = -i dot n
+            float cos = PVector.dot(PVector.mult(i, -1.0), newNorm);
+            
+            // (sin(theta2))^2 = (coeff)^2 * (1 - (cos(theta1))^2)
+            float sin2 = sq(coeff) * ( 1.0 - sq(cos));
+            
+            float coeff2 = 0.0;
+            
+            if(1.0 - sin2 > 0){
+              // used to multiply with the normal vector
+              coeff2 = (coeff * cos) - sqrt(1.0 - sin2); 
+            }
+            else{
+              return surfaceColor; 
+            }
+            
+            //refracted ray t = the formula in the project description
+            PVector t = PVector.add(PVector.mult(i, coeff), PVector.mult(newNorm, coeff2)).normalize();
+            
+            // what is t? is that the direction??? will the origin be somewhat inside the volume?
+            // should we subtract instead of add to put it inside the volume?
+            // cause adding makes it start slighty away from the location right?
+            PVector nextOrigin = hits.get(0).location;
+            Ray redirectedRay = new Ray(PVector.add(nextOrigin, PVector.mult(t, EPS)), t);
+            
+            // keep shooting till reach the end
+            color otherColor = shootRay(redirectedRay);
+            
+            // mix colors
+            return lerpColor(surfaceColor, otherColor, hits.get(0).material.properties.transparency);
+          }
+        }
+        else{
           // case where reflectiveness is == 0
+          // and case where transparency is == 0
           return surfaceColor; 
         }
-        
       }
       
       // if we hit nothing it should be the background then
