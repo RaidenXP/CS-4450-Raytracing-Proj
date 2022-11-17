@@ -1,7 +1,7 @@
-String input =  "data/tests/milestone3/animation1/scene%03d.json";
-String output = "data/tests/milestone3/animation1/scene%03d.png";
+String input =  "data/tests/milestone3/animation2/scene%03d.json";
+String output = "data/tests/milestone3/animation2/scene%03d.png";
 
-int repeat = 250;
+int repeat = 100;
 
 int iteration = 0;
 
