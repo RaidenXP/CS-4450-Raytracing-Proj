@@ -1,5 +1,5 @@
-String input =  "data/tests/submission2/test15.json";
-String output = "data/tests/submission2/test15.png";
+String input =  "data/tests/milestone3/test27.json";
+String output = "data/tests/milestone3/test27.png";
 
 int repeat = 0;
 
@@ -328,8 +328,12 @@ class RayTracer
       
       //Direction is prob the direction of the ray to the pixel
       // PVector direction = new PVector(u * w, w/2, v * h).normalize(); // This was the old direction
+      
       // Calculate the new direction using any arbitrary direction
-      PVector direction = PVector.add(PVector.add(PVector.mult(left, u*w), PVector.mult(forward, w/2)), PVector.mult(up, v*h)).normalize();
+      left = PVector.mult(PVector.mult(left, u*w), tan(scene.fov / 2)); // Shouldn't this be normalized
+      forward = PVector.mult(forward, w/2);
+      up = PVector.mult(PVector.mult(up, v*h), tan(scene.fov/2));        // Shouldn't this be normalized
+      PVector direction = PVector.add(PVector.add(left, forward), up).normalize();
       
       Ray pixelRay = new Ray(origin, direction);
       
