@@ -1,7 +1,7 @@
-String input =  "data/tests/milestone3/animation2/scene%03d.json";
-String output = "data/tests/milestone3/animation2/scene%03d.png";
+String input =  "data/tests/milestone2/test14.json";
+String output = "data/tests/milestone2/test14.png";
 
-int repeat = 100;
+int repeat = 1;
 
 int iteration = 0;
 
@@ -322,14 +322,15 @@ class RayTracer
       
       // Determine the axes for the arbitrary viewing direction
       PVector forward = scene.view;
-      PVector globalUp = new PVector(0,0,1);
-      PVector left = globalUp.cross(forward).normalize();
+      PVector left = new PVector(0,0,1).cross(forward).normalize();
       PVector up = forward.cross(left).normalize();
       
       //Direction is prob the direction of the ray to the pixel
       // PVector direction = new PVector(u * w, w/2, v * h).normalize(); // This was the old direction
       
+      // Direction is the direction that we shoot the ray
       // Calculate the new direction using any arbitrary direction
+      // Multiply left and up by tan(fov/2) to apply the specified fov
       left = PVector.mult(PVector.mult(left, u*w), tan(scene.fov / 2)); // Shouldn't this be normalized
       forward = PVector.mult(forward, w/2);
       up = PVector.mult(PVector.mult(up, v*h), tan(scene.fov/2));        // Shouldn't this be normalized
