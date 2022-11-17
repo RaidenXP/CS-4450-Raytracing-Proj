@@ -1,5 +1,5 @@
-String input =  "data/tests/milestone3/test27.json";
-String output = "data/tests/milestone3/test27.png";
+String input =  "data/tests/submission2/test15.json";
+String output = "data/tests/submission2/test15.png";
 
 int repeat = 0;
 
@@ -139,8 +139,8 @@ class RayTracer
     color shootRay(Ray currentRay){
       // only takes the current ray that is shot
       
-      // shoots the ray and looks for the intersections //<>// //<>//
-      ArrayList<RayHit> hits = scene.root.intersect(currentRay); //<>// //<>//
+      // shoots the ray and looks for the intersections //<>// //<>// //<>//
+      ArrayList<RayHit> hits = scene.root.intersect(currentRay); //<>// //<>// //<>//
       
       // if the ray hits something we go get its color and check for reflections
       if(hits.size() > 0){
@@ -317,11 +317,19 @@ class RayTracer
       //Code found on the slides
       //Seems like this is for general squared-scene cases
       //Calculating how far left or right and how far up or down we must go
-      float u = x * 1.0 / w - 0.5;
+      float u = - (x * 1.0 / w - 0.5);    // ??? I added the minus here because the pictures were flipped. I don't know why they were flipped.
       float v = - (y * 1.0 / h - 0.5);
       
+      // Determine the axes for the arbitrary viewing direction
+      PVector forward = scene.view;
+      PVector globalUp = new PVector(0,0,1);
+      PVector left = globalUp.cross(forward).normalize();
+      PVector up = forward.cross(left).normalize();
+      
       //Direction is prob the direction of the ray to the pixel
-      PVector direction = new PVector(u * w, w/2, v * h).normalize();
+      // PVector direction = new PVector(u * w, w/2, v * h).normalize(); // This was the old direction
+      // Calculate the new direction using any arbitrary direction
+      PVector direction = PVector.add(PVector.add(PVector.mult(left, u*w), PVector.mult(forward, w/2)), PVector.mult(up, v*h)).normalize();
       
       Ray pixelRay = new Ray(origin, direction);
       
