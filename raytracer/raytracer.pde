@@ -1,9 +1,9 @@
-String input =  "data/tests/milestone3/test27.json";
-String output = "data/tests/milestone3/test27.png";
+String input =  "data/tests/milestone3/animation1/scene%03d.json";
+String output = "data/tests/milestone3/animation1/scene%03d.png";
 
-int repeat = 0;
+int repeat = 250;
 
-int iteration = 1;
+int iteration = 0;
 
 // If there is a procedural material in the scene,
 // loop will automatically be turned on if this variable is set
