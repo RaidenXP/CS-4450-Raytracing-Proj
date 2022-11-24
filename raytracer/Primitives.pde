@@ -41,6 +41,11 @@ class Sphere implements SceneObject
           entry.t = t1;
           entry.location = pEntry;
           entry.normal = PVector.sub(pEntry, this.center).normalize();
+          
+          // formulas for u and v are given
+          entry.u = 0.5 + (atan2(entry.normal.y, entry.normal.x) / (2 * PI));
+          entry.v = 0.5 - (asin(entry.normal.z)/ PI);
+          
           entry.entry = true;
           entry.material = this.material;
           
@@ -55,6 +60,11 @@ class Sphere implements SceneObject
           exit.t = t2;
           exit.location = pExit;
           exit.normal = PVector.sub(pExit, this.center).normalize();
+          
+          // formulas for u and v are given
+          exit.u = 0.5 + (atan2(exit.normal.y, exit.normal.x) / (2 * PI));
+          exit.v = 0.5 - (asin(exit.normal.z)/ PI);
+          
           exit.entry = false;
           exit.material = this.material;
           
@@ -98,6 +108,39 @@ class Plane implements SceneObject
                 rh.t = t;
                 rh.location = PVector.add(r.origin, PVector.mult(r.direction, t));
                 rh.normal = this.normal;
+                
+                // used to calc textures
+                if(rh.normal.x != 0 && rh.normal.y != 0 && rh.normal.z != 1){
+                  PVector right = rh.normal.cross(new PVector(0,0,1)).normalize();
+                  PVector up = right.cross(rh.normal).normalize();
+                  
+                  PVector d = PVector.sub(rh.location, this.center);
+                  
+                  float x = PVector.dot(d, right);
+                  float y = PVector.dot(d, up);
+                  
+                  x = x / this.scale;
+                  y = y / this.scale;
+                  
+                  rh.u = x - floor(x);
+                  rh.v = (-y) - floor(-y);
+                }
+                else{
+                  PVector right = rh.normal.cross(new PVector(0,1,0)).normalize();
+                  PVector up = right.cross(rh.normal).normalize();
+                  
+                  PVector d = PVector.sub(rh.location, this.center);
+                  
+                  float x = PVector.dot(d, right);
+                  float y = PVector.dot(d, up);
+                  
+                  x = x / this.scale;
+                  y = y / this.scale;
+                  
+                  rh.u = x - floor(x);
+                  rh.v = (-y) - floor(-y);
+                }
+                
                 if (PVector.dot(r.direction, this.normal) < 0)
                     rh.entry = true;
                 else
@@ -106,25 +149,45 @@ class Plane implements SceneObject
                 
                 result.add(rh);
             }
-            /*
-            else if (t < 0) {
-                RayHit rh = new RayHit();
-                rh.t = Float.POSITIVE_INFINITY;
-                rh.location = this.center;
-                rh.normal = this.normal;
-                rh.entry = false;
-                rh.material = this.material;
-                
-                result.add(rh);
-            }*/
-            
-            // Do we need a separate else if statement for when t = 0?
         }
         if ((PVector.dot(r.direction, this.normal) < 0) && (test > 0)){ // changed from (PVector.dot(r.direction, this.normal) > 0) && (test < 0)
             RayHit rh = new RayHit();
             rh.t = Float.POSITIVE_INFINITY;
             rh.location = this.center; //PVector.add(r.origin, PVector.mult(r.direction, Float.POSITIVE_INFINITY));
             rh.normal = this.normal;
+            
+            // do we even need this here for exit positive_infinity?
+            if(rh.normal.x != 0 && rh.normal.y != 0 && rh.normal.z != 1){
+              PVector right = rh.normal.cross(new PVector(0,0,1)).normalize();
+              PVector up = right.cross(rh.normal).normalize();
+              
+              PVector d = PVector.sub(rh.location, this.center);
+              
+              float x = PVector.dot(d, right);
+              float y = PVector.dot(d, up);
+              
+              x = x / this.scale;
+              y = y / this.scale;
+              
+              rh.u = x - floor(x);
+              rh.v = (-y) - floor(-y);
+            }
+            else{
+              PVector right = rh.normal.cross(new PVector(0,1,0)).normalize();
+              PVector up = right.cross(rh.normal).normalize();
+              
+              PVector d = PVector.sub(rh.location, this.center);
+              
+              float x = PVector.dot(d, right);
+              float y = PVector.dot(d, up);
+              
+              x = x / this.scale;
+              y = y / this.scale;
+              
+              rh.u = x - floor(x);
+              rh.v = (-y) - floor(-y);
+            }
+            
             rh.entry = false;
             rh.material = this.material;
             
@@ -184,6 +247,17 @@ class Triangle implements SceneObject
             rh.t = t;
             rh.location = p;
             rh.normal = this.normal;
+            
+            float theta = u;
+            float phi = v;
+            float psi = 1 - (theta + phi);
+            
+            rh.u = (theta * tex1.x) + (phi * tex2.x) + (psi * tex3.x);
+            rh.v = (theta * tex1.y) + (phi * tex2.y) + (psi * tex3.y);
+            
+            //rh.u = u;
+            //rh.v = v;
+            
             if (PVector.dot(r.direction, this.normal) < 0)
                 rh.entry = true;
             else
