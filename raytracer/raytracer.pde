@@ -340,6 +340,8 @@ class RayTracer
       
       ArrayList<RayHit> hits = scene.root.intersect(pixelRay);
       
+      // Check for scene.reflections greater than 0 inside shootRay() instead of here
+      // We should do shootRay() every time I guess?
       if (scene.reflections > 0)
       {
           color colorCombo = shootRay(pixelRay);
