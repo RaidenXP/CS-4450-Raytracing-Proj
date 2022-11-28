@@ -50,8 +50,8 @@ class Union implements SceneObject
        // the depth. This might be wrong.
        ArrayList<RayHit> rHits = sc.intersect(r);
        // Maybe leave this commented out, maybe not?
-       //if ((rHits.size() != 0) && (rHits.get(0).entry == false))
-       //    depth++;
+       if ((rHits.size() != 0) && (rHits.get(0).entry == false))
+           depth++;
        hits.addAll(rHits);
      }
      hits.sort(new HitCompare());
