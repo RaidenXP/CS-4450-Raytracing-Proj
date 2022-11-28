@@ -49,8 +49,9 @@ class Union implements SceneObject
        // the scene object is an exit, that means we are inside an object so we increment
        // the depth. This might be wrong.
        ArrayList<RayHit> rHits = sc.intersect(r);
-       if ((rHits.size() != 0) && (rHits.get(0).entry == false))
-           depth++;
+       // Maybe leave this commented out, maybe not?
+       //if ((rHits.size() != 0) && (rHits.get(0).entry == false))
+       //    depth++;
        hits.addAll(rHits);
      }
      hits.sort(new HitCompare());

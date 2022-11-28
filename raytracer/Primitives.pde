@@ -16,7 +16,7 @@ class Sphere implements SceneObject
     
     ArrayList<RayHit> intersect(Ray r)
     {
-        ArrayList<RayHit> result = new ArrayList<RayHit>(); //<>//
+        ArrayList<RayHit> result = new ArrayList<RayHit>(); //<>// //<>//
         // TODO: Step 2: implement ray-sphere intersections
         
         // t_p = (c - o) * direction
@@ -31,7 +31,7 @@ class Sphere implements SceneObject
         //calc t-values
         //t = t_p +/- sqrt(sq(radius) - sq(distance))
         float t1 = projection - sqrt(sq(this.radius) - sq(distance));
-        float t2 = projection + sqrt(sq(this.radius) - sq(distance)); //<>// //<>//
+        float t2 = projection + sqrt(sq(this.radius) - sq(distance)); //<>// //<>// //<>//
         
         if((t1 > 0) && distance < this.radius){
           RayHit entry = new RayHit();
@@ -111,8 +111,8 @@ class Plane implements SceneObject
                 
                 // used to calc textures
                 if(rh.normal.x != 0 && rh.normal.y != 0 && rh.normal.z != 1){
-                  PVector right = rh.normal.cross(new PVector(0,0,1)).normalize();
-                  PVector up = right.cross(rh.normal).normalize();
+                  PVector right = new PVector(0,0,1).cross(rh.normal).normalize(); //rh.normal.cross(new PVector(0,0,1)).normalize();
+                  PVector up = rh.normal.cross(right).normalize(); //right.cross(rh.normal).normalize();
                   
                   PVector d = PVector.sub(rh.location, this.center);
                   
@@ -126,8 +126,8 @@ class Plane implements SceneObject
                   rh.v = (-y) - floor(-y);
                 }
                 else{
-                  PVector right = rh.normal.cross(new PVector(0,1,0)).normalize();
-                  PVector up = right.cross(rh.normal).normalize();
+                  PVector right = new PVector(0,1,0).cross(rh.normal).normalize(); //rh.normal.cross(new PVector(0,1,0)).normalize();
+                  PVector up = rh.normal.cross(right).normalize(); //right.cross(rh.normal).normalize();
                   
                   PVector d = PVector.sub(rh.location, this.center);
                   
@@ -158,8 +158,8 @@ class Plane implements SceneObject
             
             // do we even need this here for exit positive_infinity?
             if(rh.normal.x != 0 && rh.normal.y != 0 && rh.normal.z != 1){
-              PVector right = rh.normal.cross(new PVector(0,0,1)).normalize();
-              PVector up = right.cross(rh.normal).normalize();
+              PVector right = new PVector(0,0,1).cross(rh.normal).normalize(); //rh.normal.cross(new PVector(0,0,1)).normalize();
+              PVector up = rh.normal.cross(right).normalize(); //right.cross(rh.normal).normalize();
               
               PVector d = PVector.sub(rh.location, this.center);
               
@@ -173,8 +173,8 @@ class Plane implements SceneObject
               rh.v = (-y) - floor(-y);
             }
             else{
-              PVector right = rh.normal.cross(new PVector(0,1,0)).normalize();
-              PVector up = right.cross(rh.normal).normalize();
+              PVector right = new PVector(0,1,0).cross(rh.normal).normalize(); //rh.normal.cross(new PVector(0,1,0)).normalize();
+              PVector up = rh.normal.cross(right).normalize(); //right.cross(rh.normal).normalize();
               
               PVector d = PVector.sub(rh.location, this.center);
               
@@ -252,8 +252,8 @@ class Triangle implements SceneObject
             float phi = v;
             float psi = 1 - (theta + phi);
             
-            rh.u = (theta * tex1.x) + (phi * tex2.x) + (psi * tex3.x);
-            rh.v = (theta * tex1.y) + (phi * tex2.y) + (psi * tex3.y);
+            rh.u = (psi * tex1.x) + (theta * tex2.x) + (phi * tex3.x);
+            rh.v = (psi * tex1.y) + (theta * tex2.y) + (phi * tex3.y);
             
             //rh.u = u;
             //rh.v = v;
