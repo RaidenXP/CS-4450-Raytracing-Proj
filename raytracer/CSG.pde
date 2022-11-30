@@ -58,6 +58,11 @@ class Union implements SceneObject
      
      // Iterate through hits until we see an entry hit. Add 1 to depth while we see exit hits. 
      // break from the loop when we see an entry hit.
+     int i = 0;
+     while ((i < hits.size()) && (hits.get(i).entry == false)) {
+         depth++;
+         i++;
+     }
      
      // Iterate through the sorted ray hits and add appropriate hits to the result
      // according to the Union algorithm.

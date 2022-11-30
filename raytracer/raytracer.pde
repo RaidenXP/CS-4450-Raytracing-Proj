@@ -1,9 +1,9 @@
 String input =  "data/tests/milestone3/test23.json";
 String output = "data/tests/milestone3/test23.png";
 
-int repeat = 1;
+int repeat = 28;
 
-int iteration = 0;
+int iteration = 1;
 
 // If there is a procedural material in the scene,
 // loop will automatically be turned on if this variable is set
@@ -145,17 +145,23 @@ class RayTracer
       // if the ray hits something we go get its color and check for reflections
       if(hits.size() > 0){
         // helps ignore the exit rays
-        //int i = 0;
+        int f = 0;
         
         //initialize the surface color
         color surfaceColor = color(0,0,0);
         
-        // if our i is still in range and is an entry we get the color of the current object
-        
-        surfaceColor = scene.lighting.getColor(hits.get(0), scene, currentRay.origin);
+        // if our f is still in range and is an entry we get the color of the current object
+        //while ((f < hits.size()) && (hits.get(f).entry == false)) {
+        // f++;
+        //}
+        //if (f < hits.size())
+        //  surfaceColor = scene.lighting.getColor(hits.get(f), scene, currentRay.origin);
+        //else
+        //  surfaceColor = scene.background;
+        //surfaceColor = scene.lighting.getColor(hits.get(f), scene, currentRay.origin);
         
         // if there is some reflectiveness then we create a redirected ray
-        if(hits.get(0).material.properties.reflectiveness > 0){
+        if(hits.get(0).material.properties.reflectiveness > 0 && scene.reflections > 0){
           // shoots one last redirected ray if possible otherwise returns surface color or background
           // uses same process below after this if-else block;
           if(counter > scene.reflections){
@@ -338,27 +344,28 @@ class RayTracer
       
       Ray pixelRay = new Ray(origin, direction);
       
-      ArrayList<RayHit> hits = scene.root.intersect(pixelRay);
+      // ArrayList<RayHit> hits = scene.root.intersect(pixelRay);
       
       // Check for scene.reflections greater than 0 inside shootRay() instead of here
       // We should do shootRay() every time I guess?
-      if (scene.reflections > 0)
-      {
-          color colorCombo = shootRay(pixelRay);
-          return colorCombo;   
-      }
-      else if(hits.size() > 0){
-        // The while loop is used for not displaying objects that we are inside of
-        int i = 0;
-        while ((i < hits.size()) && (hits.get(i).entry == false)) {
-          i++;
-        }
+      //if (scene.reflections > 0)
+      //{
+      //    color colorCombo = shootRay(pixelRay);
+      //    return colorCombo;   
+      //}
+      //else if(hits.size() > 0){
+      //  // The while loop is used for not displaying objects that we are inside of
+      //  int i = 0;
+      //  while ((i < hits.size()) && (hits.get(i).entry == false)) {
+      //    i++;
+      //  }
         
-        if (i < hits.size())
-            return scene.lighting.getColor(hits.get(i), scene, pixelRay.origin);
-      }
+      //  if (i < hits.size())
+      //      return scene.lighting.getColor(hits.get(i), scene, pixelRay.origin);
+      //}
+      color colorCombo = shootRay(pixelRay);
       
       /// this will be the fallback case
-      return this.scene.background;
+      return colorCombo; // this.scene.background;
     }
 }
