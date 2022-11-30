@@ -1,7 +1,7 @@
-String input =  "data/tests/milestone3/test23.json";
-String output = "data/tests/milestone3/test23.png";
+String input =  "data/tests/milestone4/test%d.json";
+String output = "data/tests/milestone4/test%d.png";
 
-int repeat = 28;
+int repeat =16;
 
 int iteration = 1;
 
@@ -144,24 +144,27 @@ class RayTracer
       
       // if the ray hits something we go get its color and check for reflections
       if(hits.size() > 0){
-        // helps ignore the exit rays
-        int f = 0;
+        if (scene.reflections <= 0 && hits.get(0).material.properties.reflectiveness <= 0 && hits.get(0).material.properties.transparency <= 0) {
+          // helps ignore the exit rays
+          int f = 0;
+          
+          // if our f is still in range and is an entry we get the color of the current object
+          while ((f < hits.size()) && (hits.get(f).entry == false)) {
+           f++;
+          }
+          if (f < hits.size())
+            return scene.lighting.getColor(hits.get(f), scene, currentRay.origin);
+          else
+            return scene.background;
+        }
         
         //initialize the surface color
         color surfaceColor = color(0,0,0);
         
-        // if our f is still in range and is an entry we get the color of the current object
-        //while ((f < hits.size()) && (hits.get(f).entry == false)) {
-        // f++;
-        //}
-        //if (f < hits.size())
-        //  surfaceColor = scene.lighting.getColor(hits.get(f), scene, currentRay.origin);
-        //else
-        //  surfaceColor = scene.background;
-        //surfaceColor = scene.lighting.getColor(hits.get(f), scene, currentRay.origin);
+        surfaceColor = scene.lighting.getColor(hits.get(0), scene, currentRay.origin);
         
         // if there is some reflectiveness then we create a redirected ray
-        if(hits.get(0).material.properties.reflectiveness > 0 && scene.reflections > 0){
+        if(scene.reflections > 0 && hits.get(0).material.properties.reflectiveness > 0){
           // shoots one last redirected ray if possible otherwise returns surface color or background
           // uses same process below after this if-else block;
           if(counter > scene.reflections){
