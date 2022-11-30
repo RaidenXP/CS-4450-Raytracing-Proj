@@ -1,7 +1,7 @@
-String input =  "data/tests/milestone4/test%d.json";
-String output = "data/tests/milestone4/test%d.png";
+String input =  "data/tests/milestone3/test%d.json";
+String output = "data/tests/milestone3/test%d.png";
 
-int repeat =16;
+int repeat = 28;
 
 int iteration = 1;
 
@@ -139,24 +139,11 @@ class RayTracer
     color shootRay(Ray currentRay){
       // only takes the current ray that is shot
       
-      // shoots the ray and looks for the intersections  //<>// //<>// //<>//
-      ArrayList<RayHit> hits = scene.root.intersect(currentRay);  //<>// //<>// //<>//
+      // shoots the ray and looks for the intersections //<>//
+      ArrayList<RayHit> hits = scene.root.intersect(currentRay); //<>//
       
       // if the ray hits something we go get its color and check for reflections
       if(hits.size() > 0){
-        if (scene.reflections <= 0 && hits.get(0).material.properties.reflectiveness <= 0 && hits.get(0).material.properties.transparency <= 0) {
-          // helps ignore the exit rays
-          int f = 0;
-          
-          // if our f is still in range and is an entry we get the color of the current object
-          while ((f < hits.size()) && (hits.get(f).entry == false)) {
-           f++;
-          }
-          if (f < hits.size())
-            return scene.lighting.getColor(hits.get(f), scene, currentRay.origin);
-          else
-            return scene.background;
-        }
         
         //initialize the surface color
         color surfaceColor = color(0,0,0);
@@ -188,8 +175,6 @@ class RayTracer
               return surfaceColor; 
             }
             
-            //unreachable code when uncommented???
-            //return scene.background;
           }
           else{
             ++counter; 
@@ -306,7 +291,15 @@ class RayTracer
         else{
           // case where reflectiveness is == 0
           // and case where transparency is == 0
-          return surfaceColor; 
+          
+          int f = 0;
+          
+          while ((f < hits.size()) && (hits.get(f).entry == false)) {
+           f++;
+          }
+          
+          if (f < hits.size())
+            return surfaceColor;
         }
       }
       
@@ -347,28 +340,8 @@ class RayTracer
       
       Ray pixelRay = new Ray(origin, direction);
       
-      // ArrayList<RayHit> hits = scene.root.intersect(pixelRay);
-      
-      // Check for scene.reflections greater than 0 inside shootRay() instead of here
-      // We should do shootRay() every time I guess?
-      //if (scene.reflections > 0)
-      //{
-      //    color colorCombo = shootRay(pixelRay);
-      //    return colorCombo;   
-      //}
-      //else if(hits.size() > 0){
-      //  // The while loop is used for not displaying objects that we are inside of
-      //  int i = 0;
-      //  while ((i < hits.size()) && (hits.get(i).entry == false)) {
-      //    i++;
-      //  }
-        
-      //  if (i < hits.size())
-      //      return scene.lighting.getColor(hits.get(i), scene, pixelRay.origin);
-      //}
       color colorCombo = shootRay(pixelRay);
       
-      /// this will be the fallback case
-      return colorCombo; // this.scene.background;
+      return colorCombo; 
     }
 }

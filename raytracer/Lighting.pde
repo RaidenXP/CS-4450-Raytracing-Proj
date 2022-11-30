@@ -109,42 +109,7 @@ class PhongLightingModel extends LightingModel
         }
       }
       
-      // Calculate the specular color of the shape for each light and sum them all
-      //color S = color(0, 0, 0);
-      //for (Light l : this.lights) {
-      //  PVector L = PVector.sub(l.position, hit.location).normalize();
-        
-      //  if (withshadow) {
-      //    // PVector offsetHit = PVector.add(viewer, PVector.mult(PVector.sub(hit.location, viewer).normalize(), hit.t - EPS));
-      //    PVector offsetHit = PVector.add(hit.location, PVector.mult(L, EPS));
-      //    Ray pixelRay = new Ray(offsetHit, L);
-      //    ArrayList<RayHit> hits = sc.root.intersect(pixelRay);
-          
-      //    if ((hits.size() == 0)) {
-      //      color i_s = l.spec(hitcolor);
-      //      PVector V = PVector.sub(viewer, hit.location).normalize(); // This should be the direction to the camera, but
-      //                                                                 // I'm not sure if this is right.
-      //      PVector R = PVector.sub(PVector.mult(hit.normal, 2 * PVector.dot(hit.normal, L)), L).normalize();
-      //      float shiny = PVector.dot(R, V);
-      //      color temp = multColor(i_s, hit.material.properties.ks * pow(shiny, hit.material.properties.alpha));
-      //      S = addColors(S, temp);
-      //    }
-      //  }
-      //  else {
-      //    color i_s = l.spec(hitcolor);
-      //    PVector V = PVector.sub(viewer, hit.location).normalize(); // This should be the direction to the camera, but
-      //                                                               // I'm not sure if this is right.
-      //    PVector R = PVector.sub(PVector.mult(hit.normal, 2 * PVector.dot(hit.normal, L)), L).normalize();
-      //    float shiny = PVector.dot(R, V);
-      //    color temp = multColor(i_s, hit.material.properties.ks * pow(shiny, hit.material.properties.alpha));
-      //    S = addColors(S, temp);
-      //  }
-      //}
-      
-      // return hit.material.getColor(hit.u, hit.v);
       return addColors(addColors(A, D), S);
-      // return addColors(A, D);
-      // return A;
     }
   
 }
