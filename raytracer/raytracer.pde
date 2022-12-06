@@ -1,7 +1,7 @@
-String input =  "data/tests/milestone3/test%d.json";
-String output = "data/tests/milestone3/test%d.png";
+String input =  "data/tests/milestone4/test13.json";
+String output = "data/tests/milestone4/test13.png";
 
-int repeat = 28;
+int repeat = 0;
 
 int iteration = 1;
 
@@ -154,27 +154,9 @@ class RayTracer
         if(scene.reflections > 0 && hits.get(0).material.properties.reflectiveness > 0){
           // shoots one last redirected ray if possible otherwise returns surface color or background
           // uses same process below after this if-else block;
-          if(counter > scene.reflections){
-            PVector nextOrigin = hits.get(0).location;
-            PVector v = PVector.mult(currentRay.direction, -1);
-            PVector nextDirection = PVector.sub(PVector.mult(hits.get(0).normal, 2 * PVector.dot(hits.get(0).normal, v)), v).normalize();
-          
-            Ray redirectedRay = new Ray(nextOrigin, nextDirection);
-          
-            ArrayList<RayHit> nextHits = scene.root.intersect(redirectedRay);
-          
-            if(nextHits.size() > 0){
-              //int j = 0;
-            
-              color otherColor = color(0,0,0);
-              
-              otherColor = scene.lighting.getColor(nextHits.get(0), scene, redirectedRay.origin);
-              return lerpColor(surfaceColor, otherColor, hits.get(0).material.properties.reflectiveness);
-            }
-            else{
-              return surfaceColor; 
-            }
-            
+          // will now no longer shoot one extra ray to see if we can fix things
+          if(counter >= scene.reflections){
+            return surfaceColor; 
           }
           else{
             ++counter; 

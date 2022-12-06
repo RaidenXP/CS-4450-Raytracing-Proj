@@ -242,7 +242,7 @@ class Triangle implements SceneObject
           float v = ((PVector.dot(e, e) * PVector.dot(d, g_prime)) - (PVector.dot(e, g_prime) * PVector.dot(d, e))) / denom;
           
           //Check to see if point is in triangle
-          if( u >= 0 && v >= 0 && u+v <= 1){
+          if( u >= 0 && v >= 0 && u+v <= 1 && t > 0){
             RayHit rh = new RayHit();
             rh.t = t;
             rh.location = p;
