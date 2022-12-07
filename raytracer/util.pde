@@ -63,3 +63,8 @@ public class NotImplementedException extends RuntimeException
         super(errorMessage);
     }
 }
+
+String formatColor(color c)
+{
+   return r(c) + "," + g(c) +"," + b(c);
+}

@@ -1,5 +1,8 @@
-String input =  "data/tests/milestone4/test10.json";
-String output = "data/tests/milestone4/test10.png";
+String input =  "data/tests/submission4/test26.json";
+String output = "data/tests/submission4/test26.png";
+
+//String input =  "data/tests/milestone4/test11.json";
+//String output = "data/tests/milestone4/test11.png";
 
 int repeat = 0;
 
@@ -45,17 +48,19 @@ void draw () {
         if (out != null)
            out.pixels[j*width + i] = c;
       }
-    }
+    }/**/
     
     // This may be useful for debugging:
     // only draw a 3x3 grid of pixels, starting at (315,315)
     // comment out the full loop above, and use this
     // to find issues in a particular region of an image, if necessary
-    /*for (int i = 0; i< 3; ++i)
+   /* int w = 20;
+    int h = 30;
+    for (int i = 0; i< w; ++i)
     {
-      for (int j = 0; j< 3; ++j)
-         set(315+i,315+j, rt.getColor(315+i,315+j));
-    }*/
+      for (int j = 0; j< h; ++j)
+         set(320+i,100+j, rt.getColor(310+i,100+j));
+    }/**/
     
     if (out != null)
     {
@@ -139,8 +144,8 @@ class RayTracer
     color shootRay(Ray currentRay){
       // only takes the current ray that is shot
       
-      // shoots the ray and looks for the intersections //<>// //<>//
-      ArrayList<RayHit> hits = scene.root.intersect(currentRay); //<>// //<>//
+      // shoots the ray and looks for the intersections //<>//
+      ArrayList<RayHit> hits = scene.root.intersect(currentRay); //<>//
       
       // if the ray hits something we go get its color and check for reflections
       if(hits.size() > 0){
@@ -151,7 +156,7 @@ class RayTracer
         surfaceColor = scene.lighting.getColor(hits.get(0), scene, currentRay.origin);
         
         // if there is some reflectiveness then we create a redirected ray
-        if(scene.reflections > 0 && hits.get(0).material.properties.reflectiveness > 0){
+        if(scene.reflections > 0 && hits.get(0).material.properties.reflectiveness > 0 && hits.get(0).entry){
           // shoots one last redirected ray if possible otherwise returns surface color or background
           // uses same process below after this if-else block;
           // will now no longer shoot one extra ray to see if we can fix things
@@ -161,7 +166,7 @@ class RayTracer
           else{
             ++counter; 
           }
-          
+         
           // origin of the redirected ray starts on the hit location with some offset
           PVector nextOrigin = hits.get(0).location; //PVector.add(hits.get(i).location, PVector.mult(currentRay.direction, EPS));
           
@@ -175,7 +180,7 @@ class RayTracer
           
           // keep shooting our redirected ray
           color otherColor = shootRay(redirectedRay);
-          
+
           // mix colors and return
           return lerpColor(surfaceColor, otherColor, hits.get(0).material.properties.reflectiveness);
         }
