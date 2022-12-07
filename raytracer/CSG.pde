@@ -51,8 +51,8 @@ class Union implements SceneObject
        ArrayList<RayHit> rHits = sc.intersect(r);
        // Maybe leave this commented out, maybe not?
        // OLD WAY
-       //if ((rHits.size() != 0) && (rHits.get(0).entry == false))
-       //    depth++;
+       if ((rHits.size() != 0) && (rHits.get(0).entry == false))
+           depth++;
        hits.addAll(rHits);
      }
      hits.sort(new HitCompare());
@@ -60,11 +60,11 @@ class Union implements SceneObject
      // Iterate through hits until we see an entry hit. Add 1 to depth while we see exit hits. 
      // break from the loop when we see an entry hit.
      // NEW IMPLEMENTATION
-     int i = 0;
-     while ((i < hits.size()) && (hits.get(i).entry == false)) {
-         depth++;
-         i++;
-     }
+     //int i = 0;
+     //while ((i < hits.size()) && (hits.get(i).entry == false)) {
+     //    depth++;
+     //    i++;
+     //}
      
      // Iterate through the sorted ray hits and add appropriate hits to the result
      // according to the Union algorithm.
@@ -119,6 +119,15 @@ class Intersection implements SceneObject
        hits.addAll(rHits);
      }
      hits.sort(new HitCompare());
+     
+     // Iterate through hits until we see an entry hit. Add 1 to depth while we see exit hits. 
+     // break from the loop when we see an entry hit.
+     // NEW IMPLEMENTATION
+     //int i = 0;
+     //while ((i < hits.size()) && (hits.get(i).entry == false)) {
+     //    depth++;
+     //    i++;
+     //}
      
      // Iterate through the sorted ray hits and add appropriate hits to the result
      // according to the Intersection algorithm.

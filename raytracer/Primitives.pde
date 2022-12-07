@@ -16,7 +16,7 @@ class Sphere implements SceneObject
     
     ArrayList<RayHit> intersect(Ray r)
     {
-        ArrayList<RayHit> result = new ArrayList<RayHit>(); //<>// //<>//
+        ArrayList<RayHit> result = new ArrayList<RayHit>(); //<>// //<>// //<>//
         // TODO: Step 2: implement ray-sphere intersections
         
         // t_p = (c - o) * direction
@@ -31,7 +31,7 @@ class Sphere implements SceneObject
         //calc t-values
         //t = t_p +/- sqrt(sq(radius) - sq(distance))
         float t1 = projection - sqrt(sq(this.radius) - sq(distance));
-        float t2 = projection + sqrt(sq(this.radius) - sq(distance)); //<>// //<>// //<>//
+        float t2 = projection + sqrt(sq(this.radius) - sq(distance)); //<>// //<>// //<>// //<>//
         
         if((t1 > 0) && distance < this.radius){
           RayHit entry = new RayHit();
@@ -248,23 +248,37 @@ class Triangle implements SceneObject
             rh.location = p;
             rh.normal = this.normal;
             
+            
+            RayHit rh2 = new RayHit();
+            rh2.t = t + EPS;
+            rh2.location = PVector.add(r.origin, PVector.mult(r.direction, rh2.t));
+            rh2.normal = this.normal;
+            
             float theta = u;
             float phi = v;
             float psi = 1 - (theta + phi);
             
             rh.u = (psi * tex1.x) + (theta * tex2.x) + (phi * tex3.x);
             rh.v = (psi * tex1.y) + (theta * tex2.y) + (phi * tex3.y);
+            rh2.u = (psi * tex1.x) + (theta * tex2.x) + (phi * tex3.x);
+            rh2.v = (psi * tex1.y) + (theta * tex2.y) + (phi * tex3.y);
             
             //rh.u = u;
             //rh.v = v;
             
-            if (PVector.dot(r.direction, this.normal) < 0)
+            if (PVector.dot(r.direction, this.normal) < 0) {
                 rh.entry = true;
-            else
+                rh2.entry = false;
+            }
+            else {
                 rh.entry = false;
+                rh2.entry = true;
+            }
             rh.material = this.material;
+            rh2.material = this.material;
               
             result.add(rh);
+            result.add(rh2);
           }
         }
         
