@@ -250,7 +250,7 @@ class Triangle implements SceneObject
             
             
             RayHit rh2 = new RayHit();
-            rh2.t = t + EPS * 10000;
+            rh2.t = t + EPS;
             rh2.location = PVector.add(r.origin, PVector.mult(r.direction, rh2.t));
             rh2.normal = this.normal;
             

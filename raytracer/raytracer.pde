@@ -1,10 +1,10 @@
-String input =  "data/tests/submission4/test26.json";
-String output = "data/tests/submission4/test26.png";
+String input =  "data/tests/submission4/test%d.json";
+String output = "data/tests/submission4/test%d.png";
 
 //String input =  "data/tests/milestone4/test11.json";
 //String output = "data/tests/milestone4/test11.png";
 
-int repeat = 0;
+int repeat = 52;
 
 int iteration = 1;
 
