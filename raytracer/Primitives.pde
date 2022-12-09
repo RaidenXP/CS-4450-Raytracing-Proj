@@ -317,6 +317,8 @@ abstract class Quadrics
     abstract float calc_b(Ray r);
     abstract float calc_c(Ray r);
     abstract PVector calc_Normal(PVector p);
+    abstract float calc_u(RayHit e);
+    abstract float calc_v(PVector p, float sc);
     ArrayList<RayHit> myFunction(float a, float b, float c, Ray r) // Temporary function name. 
     {
         ArrayList<RayHit> result = new ArrayList<RayHit>();
@@ -351,6 +353,10 @@ abstract class Quadrics
             entry.normal = calc_Normal(pEntry);
             entry.entry = true;
             entry.material = this.material;
+            
+            
+            entry.u = calc_u(entry);
+            entry.v = calc_v(pEntry, this.scale);
 
             result.add(entry);
           }
@@ -399,6 +405,9 @@ abstract class Quadrics
             exit.normal = calc_Normal(pExit);
             exit.entry = false;
             exit.material = this.material;
+            
+            exit.u = calc_u(exit);
+            exit.v = calc_v(pExit, this.scale);
 
             result.add(exit);
           }
@@ -475,6 +484,17 @@ class Cylinder extends Quadrics implements SceneObject
         return new PVector(p.x, p.y, 0).normalize();
     }
     
+    float calc_u(RayHit e)
+    {
+        return 0.5 + (atan2(e.normal.y, e.normal.x) / (2 * PI));
+    }
+    
+    float calc_v(PVector p, float sc)
+    {
+        float z = p.z / this.scale;
+        return (-z) - floor(-z);
+    }
+    
     ArrayList<RayHit> intersect(Ray r)
     {   
         float a = calc_a(r);
@@ -516,6 +536,17 @@ class Cone extends Quadrics implements SceneObject
     {
         // This should be (2x, 2y, -2z)
         return new PVector(2 * p.x, 2 * p.y, -2 * p.z).normalize();
+    }
+    
+    float calc_u(RayHit e)
+    {
+        return 0.5 + (atan2(e.normal.y, e.normal.x) / (2 * PI));
+    }
+    
+    float calc_v(PVector p, float sc)
+    {
+        float z = p.z / this.scale;
+        return (-z) - floor(-z);
     }
     
     ArrayList<RayHit> intersect(Ray r)
@@ -565,6 +596,17 @@ class Paraboloid extends Quadrics implements SceneObject
         return new PVector(2 * p.x, 2 * p.y, -1).normalize();
     }
     
+    float calc_u(RayHit e)
+    {
+        return 0.5 + (atan2(e.normal.y, e.normal.x) / (2 * PI));
+    }
+    
+    float calc_v(PVector p, float sc)
+    {
+        float z = sqrt(p.z); // / this.scale;
+        return (-z) - floor(-z);
+    }
+    
     ArrayList<RayHit> intersect(Ray r)
     {
         //ArrayList<RayHit> result = new ArrayList<RayHit>();
@@ -612,6 +654,17 @@ class HyperboloidOneSheet extends Quadrics implements SceneObject
         // This should be (2x, 2y, -2z)
         return new PVector(2 * p.x, 2 * p.y, -2 * p.z).normalize();
     }
+    
+    float calc_u(RayHit e)
+    {
+        return 0.5 + (atan2(e.normal.y, e.normal.x) / (2 * PI));
+    }
+    
+    float calc_v(PVector p, float sc)
+    {
+        float z = sqrt(p.z); // / this.scale;
+        return (-z) - floor(-z);
+    }
   
     ArrayList<RayHit> intersect(Ray r)
     {
@@ -658,6 +711,17 @@ class HyperboloidTwoSheet extends Quadrics implements SceneObject
     {
         // This should be (2x, 2y, -2z)
         return new PVector(2 * p.x, 2 * p.y, -2 * p.z).normalize();
+    }
+    
+    float calc_u(RayHit e)
+    {
+        return 0.5 + (atan2(e.normal.y, e.normal.x) / (2 * PI));
+    }
+    
+    float calc_v(PVector p, float sc)
+    {
+        float z = sqrt(p.z) / this.scale;
+        return (-z) - floor(-z);
     }
   
     ArrayList<RayHit> intersect(Ray r)
