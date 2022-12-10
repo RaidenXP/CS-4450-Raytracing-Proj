@@ -163,3 +163,73 @@ class LavaMaterialBuilder extends ProceduralMaterialBuilder
 }
 
 LavaMaterialBuilder lava = new LavaMaterialBuilder();
+
+class WaterMaterial extends ProceduralMaterial
+{
+    PImage texture;
+    WaterMaterial(MaterialProperties props)
+    {
+       super(props);
+       this.texture = loadImage("water_plane.jpg");
+       this.texture.loadPixels();
+    }
+    
+    color getColor(float u, float v)
+    {
+       u += sin(millis()/10000.0)/10;
+       v += sin(millis()/8000.0)/20;
+       int x = clamp(int(this.texture.width * u), 0, this.texture.width-1);
+       int y = clamp(int(this.texture.height*v), 0, this.texture.height-1);
+       
+       return this.texture.get(x,y);
+    }
+}
+
+class WaterMaterialBuilder extends ProceduralMaterialBuilder
+{
+    WaterMaterialBuilder()
+    {
+        super("Water");
+    }
+    ProceduralMaterial make(MaterialProperties props)
+    {
+        return new WaterMaterial(props);
+    }
+}
+
+WaterMaterialBuilder water = new WaterMaterialBuilder();
+
+class EarthMaterial extends ProceduralMaterial
+{
+    PImage texture;
+    EarthMaterial(MaterialProperties props)
+    {
+       super(props);
+       this.texture = loadImage("earth.jpg");
+       this.texture.loadPixels();
+    }
+    
+    color getColor(float u, float v)
+    {
+       u += sin(millis()/10000.0)/10;
+       v += sin(millis()/8000.0)/30;
+       int x = clamp(int(this.texture.width * u), 0, this.texture.width-1);
+       int y = clamp(int(this.texture.height*v), 0, this.texture.height-1);
+       
+       return this.texture.get(x,y);
+    }
+}
+
+class EarthMaterialBuilder extends ProceduralMaterialBuilder
+{
+    EarthMaterialBuilder()
+    {
+        super("Earth");
+    }
+    ProceduralMaterial make(MaterialProperties props)
+    {
+        return new EarthMaterial(props);
+    }
+}
+
+EarthMaterialBuilder earth = new EarthMaterialBuilder();

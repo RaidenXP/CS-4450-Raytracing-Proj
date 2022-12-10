@@ -1,8 +1,8 @@
-String input =  "data/tests/submission4/test49.json";
-String output = "data/tests/submission4/test49.png";
+//String input =  "data/tests/milestone4/test13.json";
+//String output = "data/tests/milestone4/test13.png";
 
-//String input =  "data/tests/milestone4/test11.json";
-//String output = "data/tests/milestone4/test11.png";
+String input =  "data/tests/procedural/test2.json";
+String output = "data/tests/procedural/test2.png";
 
 int repeat = 0;
 
@@ -142,8 +142,8 @@ class RayTracer
     }
     
     color shootRay(Ray currentRay){
-      // only takes the current ray that is shot
-      
+      // only takes the current ray that is shot //<>//
+       //<>//
       // shoots the ray and looks for the intersections //<>//
       ArrayList<RayHit> hits = scene.root.intersect(currentRay); //<>//
       

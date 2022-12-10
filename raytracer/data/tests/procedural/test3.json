@@ -1,0 +1,15 @@
+
+{
+  "scene": { 
+                "type": "sphere",
+                "radius": 150,
+                "center": {"x": 0, "y": 280, "z": 0},
+                "material": {"type": "procedural", "name": "Earth"}
+            },
+   "camera": {"x": 0, "y": 0, "z": 0},
+   "view": {"x": 0, "y": 1, "z": 0},
+   "background": {"gray": 128},
+   "fov": 90,
+   "reflections": 0,
+   "lighting": {"type": "basic", "lights": [{"position": {"x": -3, "y": -2, "z": -5}, "color": {"gray": 128}}]}
+}
