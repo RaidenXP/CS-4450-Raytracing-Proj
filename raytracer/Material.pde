@@ -211,7 +211,7 @@ class EarthMaterial extends ProceduralMaterial
     
     color getColor(float u, float v)
     {
-       u += sin(millis()/10000.0)/10;
+       u += sin(millis()/10000.0)/30;
        v += sin(millis()/8000.0)/30;
        int x = clamp(int(this.texture.width * u), 0, this.texture.width-1);
        int y = clamp(int(this.texture.height*v), 0, this.texture.height-1);

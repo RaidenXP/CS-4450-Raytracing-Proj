@@ -491,7 +491,7 @@ class Cylinder extends Quadrics implements SceneObject
     
     float calc_v(PVector p, float sc)
     {
-        float z = p.z / this.scale;
+        float z = p.z / sc;
         return (-z) - floor(-z);
     }
     
@@ -545,7 +545,7 @@ class Cone extends Quadrics implements SceneObject
     
     float calc_v(PVector p, float sc)
     {
-        float z = p.z / this.scale;
+        float z = p.z / sc;
         return (-z) - floor(-z);
     }
     
@@ -603,7 +603,7 @@ class Paraboloid extends Quadrics implements SceneObject
     
     float calc_v(PVector p, float sc)
     {
-        float z = sqrt(p.z); // / this.scale;
+        float z = sqrt(p.z); // / sc;
         return (-z) - floor(-z);
     }
     
@@ -662,7 +662,7 @@ class HyperboloidOneSheet extends Quadrics implements SceneObject
     
     float calc_v(PVector p, float sc)
     {
-        float z = sqrt(p.z); // / this.scale;
+        float z = p.z / sc;
         return (-z) - floor(-z);
     }
   
@@ -720,7 +720,7 @@ class HyperboloidTwoSheet extends Quadrics implements SceneObject
     
     float calc_v(PVector p, float sc)
     {
-        float z = sqrt(p.z) / this.scale;
+        float z = p.z / sc;
         return (-z) - floor(-z);
     }
   
