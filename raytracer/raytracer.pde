@@ -1,12 +1,12 @@
-String input =  "data/tests/final/test5.json";
-String output = "data/tests/final/test5.png";
+//String input =  "data/tests/final/test5.json";
+//String output = "data/tests/final/test5.png";
 
-//String input =  "data/tests/procedural/test3.json";
-//String output = "data/tests/procedural/test3.png";
+String input =  "data/tests/final_ani/scene000.json";
+String output = "data/tests/final_ani/scene000.png";
 
 int repeat = 0;
 
-int iteration = 0;
+int iteration = 1;
 
 // If there is a procedural material in the scene,
 // loop will automatically be turned on if this variable is set
@@ -18,6 +18,10 @@ String output = "data/tests/milestone3/animation1/frame%03d.png";
 int repeat = 100;
 */
 
+// our animation
+//String input =  "data/tests/final_ani/scene%03d.json";
+//String output = "data/tests/final_ani/scene%03d.png";
+//int repeat = 100;
 
 RayTracer rt;
 
@@ -142,10 +146,10 @@ class RayTracer
     }
     
     color shootRay(Ray currentRay){
-      // only takes the current ray that is shot //<>//
-       //<>//
-      // shoots the ray and looks for the intersections //<>// //<>//
-      ArrayList<RayHit> hits = scene.root.intersect(currentRay); //<>// //<>//
+      // only takes the current ray that is shot //<>// //<>//
+       //<>// //<>//
+      // shoots the ray and looks for the intersections //<>// //<>// //<>//
+      ArrayList<RayHit> hits = scene.root.intersect(currentRay); //<>// //<>// //<>//
       
       // if the ray hits something we go get its color and check for reflections
       if(hits.size() > 0){
