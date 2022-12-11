@@ -1,8 +1,8 @@
-//String input =  "data/tests/final/test5.json";
-//String output = "data/tests/final/test5.png";
+String input =  "data/tests/final/test5.json";
+String output = "data/tests/final/test5.png";
 
-String input =  "data/tests/final_ani/scene000.json";
-String output = "data/tests/final_ani/scene000.png";
+//String input =  "data/tests/final_ani_2/scene050.json";
+//String output = "data/tests/final_ani_2/scene050.png";
 
 int repeat = 0;
 
@@ -19,8 +19,8 @@ int repeat = 100;
 */
 
 // our animation
-//String input =  "data/tests/final_ani/scene%03d.json";
-//String output = "data/tests/final_ani/scene%03d.png";
+//String input =  "data/tests/final_ani_2/scene%03d.json";
+//String output = "data/tests/final_ani_2/scene%03d.png";
 //int repeat = 100;
 
 RayTracer rt;
