@@ -1,0 +1,9 @@
+test1.png: Lens in front of textured sphere
+
+test2.png: Reflective bowl with textured sphere in it
+
+test3.png: Sphere with difference of union of spheres. Some reflective, textured, or refractive.
+
+test4.png: Three reflective planes surround a sphere with three light sources.
+
+test5.png: Difference of square made with intersection of planes and cylinder.
