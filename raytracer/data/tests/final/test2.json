@@ -1,0 +1,31 @@
+{
+   "scene": {"type": "union",
+             "children": [
+           {
+             "type": "difference",
+             "a": 
+               {"type": "sphere",
+                "radius": 120,
+                "center": {"x": 0, "y": 250, "z": 0},
+                "material": { "color": {"r": 128}}},
+             "b":  {"type": "sphere",
+                "radius": 80,
+                "center": {"x": 0, "y": 150, "z": 0},
+                "material": {"reflectiveness": 0.9, "color": {"color": 255}}}
+            },
+            {"type": "sphere",
+                "radius": 25,
+                "center": {"x": 0, "y": 180, "z": 0},
+                "material": {"type": "textured", "texture": "clouds.jpg"}}
+            
+            ]},
+    "reflections": 15,
+    "camera": {"x": 0, "y": 100, "z": 0},
+    "view": {"x": 0, "y": 1, "z": 0}, 
+    "lighting": {"type": "phong", "ambient": {"color": 128}, "shadows": true,
+                "lights": [
+                           {"position": {"x": -80, "y": -500, "z": 0}, "color": {"r": 255, "g": 255, "b": 255}},
+                           {"position": {"x": 80, "y": -500, "z": 0}, "color": {"r": 255, "g": 255, "b": 255}},
+                           {"position": {"x": 0, "y": -500, "z": 80}, "color": {"r": 255, "g": 255, "b": 255}}
+                ]}
+}

@@ -1,5 +1,5 @@
-String input =  "data/tests/submission4/test47.json";
-String output = "data/tests/submission4/test47.png";
+String input =  "data/tests/final/test5.json";
+String output = "data/tests/final/test5.png";
 
 //String input =  "data/tests/procedural/test3.json";
 //String output = "data/tests/procedural/test3.png";
