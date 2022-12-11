@@ -1,3 +1,5 @@
+Group: Isaac Diaz and Nathan Tran
+
 test1.png: Lens in front of textured sphere
 
 test2.png: Reflective bowl with textured sphere in it
@@ -7,3 +9,7 @@ test3.png: Sphere with difference of union of spheres. Some reflective, textured
 test4.png: Three reflective planes surround a sphere with three light sources.
 
 test5.png: Difference of square made with intersection of planes and cylinder.
+
+final_ani_1.mp4: Sphere moving behind a transparent hourglass with a textured background.
+
+final_ani_2.mp4: Sphere and textured background moving behind a transparent hourglass.
